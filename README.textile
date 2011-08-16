@@ -1,0 +1,9 @@
+h1. Encanado
+
+A simple way to access databases with ADO.NET.
+
+h2. How!?
+
+This is a simple class, DataContext, and some extensions to resolve problens -- not creates like EF and NH :)
+
+More information comming soon...
