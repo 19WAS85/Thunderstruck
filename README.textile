@@ -1,6 +1,7 @@
-h1. Encanado
+h1. Thunderstruck
 
 A simple way to access databases with ADO.NET.
+For those who like SQL and are tired of the problems of the NH and EF.
 
 h2. How!?
 

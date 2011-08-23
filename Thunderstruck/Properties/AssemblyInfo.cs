@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Encanado")]
-[assembly: AssemblyDescription("Encanado is a simple way to access databases with ADO.NET.")]
+[assembly: AssemblyTitle("Thunderstruck")]
+[assembly: AssemblyDescription("Thunderstruck is a simple way to access databases with ADO.NET.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Wagner Andrade")]
-[assembly: AssemblyProduct("Encanado")]
+[assembly: AssemblyProduct("Thunderstruck")]
 [assembly: AssemblyCopyright("Copyright © Wagner Andrade 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

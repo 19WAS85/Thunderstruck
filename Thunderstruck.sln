@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encanado", "Encanado\Encanado.csproj", "{0DC5AB48-1DA5-4185-A18E-46C111A82454}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thunderstruck", "Encanado\Thunderstruck.csproj", "{0DC5AB48-1DA5-4185-A18E-46C111A82454}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,7 +5,7 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Data;
 
-namespace Encanado
+namespace Thunderstruck
 {
     public static class DataExtensions
     {

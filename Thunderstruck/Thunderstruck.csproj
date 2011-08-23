@@ -8,8 +8,8 @@
     <ProjectGuid>{0DC5AB48-1DA5-4185-A18E-46C111A82454}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Encanado</RootNamespace>
-    <AssemblyName>Encanado</AssemblyName>
+    <RootNamespace>Thunderstruck</RootNamespace>
+    <AssemblyName>Thunderstruck</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Configuration;
 
-namespace Encanado
+namespace Thunderstruck
 {
     public enum Transaction { Begin, No }
 
