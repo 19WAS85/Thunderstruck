@@ -34,12 +34,12 @@ namespace Encanado.Access
 
         public SqlDataReader Query(string query, object queryParams = null)
         {
-            return CommandToExecute(query, queryParams).ExecuteReader();
+            return CommandToExecute(query, queryParams, false).ExecuteReader();
         }
 
         public int Execute(string command, object commandParams = null)
         {
-            return CommandToExecute(command, commandParams).ExecuteNonQuery();
+            return CommandToExecute(command, commandParams, true).ExecuteNonQuery();
         }
 
         public int GetIdentity(string command, object commandParams = null)
@@ -50,7 +50,7 @@ namespace Encanado.Access
 
         public T GetValue<T>(string query, object queryParams = null)
         {
-            var value = CommandToExecute(query, queryParams).ExecuteScalar();
+            var value = CommandToExecute(query, queryParams, false).ExecuteScalar();
 
             if (value is DBNull) return default(T);
             else return (T) Convert.ChangeType(value, typeof(T));
@@ -63,7 +63,7 @@ namespace Encanado.Access
 
         public void Commit()
         {
-            _transaction.Commit();
+            if(_transaction != null) _transaction.Commit();
         }
 
         public void Dispose()
@@ -71,11 +71,11 @@ namespace Encanado.Access
             _connection.Close();
         }
 
-        private SqlCommand CommandToExecute(string query, object objectParameters)
+        private SqlCommand CommandToExecute(string query, object objectParameters, bool openTransaction)
         {
             try
             {
-                OpenConnection();
+                OpenConnection(openTransaction);
             }
             catch (Exception err)
             {
@@ -89,11 +89,15 @@ namespace Encanado.Access
             return command;
         }
 
-        private void OpenConnection()
+        private void OpenConnection(bool openTransaction)
         {
             if (_connection.State == ConnectionState.Closed)
             {
                 _connection.Open();
+            }
+
+            if (_transaction != null && openTransaction)
+            {
                 _transaction = _connection.BeginTransaction();
             }
         }
