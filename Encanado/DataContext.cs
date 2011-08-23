@@ -6,8 +6,10 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Configuration;
 
-namespace Encanado.Access
+namespace Encanado
 {
+    public enum Transaction { Begin, No }
+
     public class DataContext : IDisposable
     {
         private SqlConnection _connection;
@@ -18,10 +20,14 @@ namespace Encanado.Access
             DefaultConnectionStringName = "Default";
         }
 
-        public DataContext() : this(null) { }
+        public DataContext() : this(null, Transaction.Begin) { }
 
-        public DataContext(string connectionString)
+        public DataContext(Transaction transaction) : this(null, transaction) { }
+
+        public DataContext(string connectionString, Transaction transaction)
         {
+            TransactionMode = transaction;
+
             if (String.IsNullOrEmpty(connectionString))
             {
                 connectionString = ConfigurationManager.ConnectionStrings[DefaultConnectionStringName].ConnectionString;
@@ -31,6 +37,8 @@ namespace Encanado.Access
         }
 
         public static string DefaultConnectionStringName { get; set; }
+
+        public Transaction TransactionMode { get; set; }
 
         public SqlDataReader Query(string query, object queryParams = null)
         {
@@ -45,15 +53,16 @@ namespace Encanado.Access
         public int GetIdentity(string command, object commandParams = null)
         {
             var identityQuery = String.Concat(command, "; SELECT SCOPE_IDENTITY()");
-            return GetValue<int>(identityQuery, commandParams);
+            var value = CommandToExecute(identityQuery, commandParams, true).ExecuteScalar();
+
+            return CastQueryValue<int>(value);
         }
 
         public T GetValue<T>(string query, object queryParams = null)
         {
             var value = CommandToExecute(query, queryParams, false).ExecuteScalar();
 
-            if (value is DBNull) return default(T);
-            else return (T) Convert.ChangeType(value, typeof(T));
+            return CastQueryValue<T>(value);
         }
 
         public object GetValue(string query, object queryParams = null)
@@ -96,10 +105,16 @@ namespace Encanado.Access
                 _connection.Open();
             }
 
-            if (_transaction != null && openTransaction)
+            if (TransactionMode == Transaction.Begin && openTransaction && _transaction == null)
             {
                 _transaction = _connection.BeginTransaction();
             }
+        }
+
+        private T CastQueryValue<T>(object value)
+        {
+            if (value is DBNull) return default(T);
+            else return (T)Convert.ChangeType(value, typeof(T));
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Data;
 
-namespace Encanado.Access
+namespace Encanado
 {
     public static class DataExtensions
     {
@@ -71,7 +71,7 @@ namespace Encanado.Access
 
         public static T First<T>(this DataContext data, string query, object queryParams = null) where T : new()
         {
-            return data.All<T>(query, queryParams).First();
+            return data.All<T>(query, queryParams).FirstOrDefault();
         }
 
         #endregion
