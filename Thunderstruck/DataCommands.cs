@@ -7,6 +7,13 @@ namespace Thunderstruck
 {
     public class DataCommands<T> where T : new()
     {
+        private string _customTableName;
+
+        public DataCommands(string tableName = null)
+        {
+            _customTableName = tableName;
+        }
+
         public int Insert(T target, DataContext dataContext = null)
         {
             var data = dataContext ?? new DataContext(Transaction.No);
@@ -14,7 +21,7 @@ namespace Thunderstruck
             try
             {
                 var targetType = typeof(T);
-                var tableName = targetType.Name;
+                var tableName = _customTableName ?? targetType.Name;
 
                 var fields = DataExtensions.GetValidPropertiesOf(targetType).Select(p => p.Name).Skip(1);
                 var csvFields = String.Join(", ", fields);
