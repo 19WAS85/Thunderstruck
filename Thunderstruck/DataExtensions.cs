@@ -16,12 +16,15 @@ namespace Thunderstruck
         public static PropertyInfo[] GetValidPropertiesOf(Type type)
         {
             var ignore = typeof(DataIgnoreAttribute);
+            var dataCommands = typeof(DataCommands<>);
+            var dataQuery = typeof(DataQueryObject<>);
 
             return type
                 .GetProperties()
                 .Where(p =>
-                    p.PropertyType.Name != "DataCommands`1" &&
-                    p.PropertyType.Name != "DataQueryObject`1" &&
+                    p.PropertyType.IsValueType &&
+                    p.PropertyType != dataCommands &&
+                    p.PropertyType != dataQuery &&
                     p.GetCustomAttributes(ignore, false).Length == 0)
                 .ToArray();
         }
