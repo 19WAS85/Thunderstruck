@@ -22,7 +22,7 @@ namespace Thunderstruck
             return type
                 .GetProperties()
                 .Where(p =>
-                    p.PropertyType.IsValueType &&
+                    !p.PropertyType.IsInterface &&
                     p.PropertyType != dataCommands &&
                     p.PropertyType != dataQuery &&
                     p.GetCustomAttributes(ignore, false).Length == 0)
