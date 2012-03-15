@@ -27,6 +27,11 @@ namespace Thunderstruck
                 .ToArray();
         }
 
+        public static PropertyInfo GetPrimaryKey(Type type)
+        {
+            return GetValidPropertiesOf(type).First();
+        }
+
         #endregion
 
         #region SqlDataReader
