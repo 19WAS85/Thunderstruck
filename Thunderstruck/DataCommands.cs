@@ -14,7 +14,7 @@ namespace Thunderstruck
             try
             {
                 var targetType = typeof(T);
-                var tableName = DataExtensions.Pluralization.Pluralize(targetType.Name);
+                var tableName = targetType.Name;
 
                 var fields = DataExtensions.GetValidPropertiesOf(targetType).Select(p => p.Name).Skip(1);
                 var csvFields = String.Join(", ", fields);

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
-using System.Data.Entity.Design.PluralizationServices;
 using System.Globalization;
 using System.Reflection;
 
@@ -13,14 +12,6 @@ namespace Thunderstruck
     public static class DataExtensions
     {
         #region Utils
-
-        public static readonly PluralizationService Pluralization;
-
-        static DataExtensions()
-        {
-            var americanCulture = CultureInfo.GetCultureInfo("en-US");
-            Pluralization = PluralizationService.CreateService(americanCulture);
-        }
 
         public static PropertyInfo[] GetValidPropertiesOf(Type type)
         {

@@ -44,7 +44,7 @@ namespace Thunderstruck
 
             var targetType = typeof(T);
             var fields = String.Join(", ", DataExtensions.GetValidPropertiesOf(targetType).Select(p => p.Name));
-            var tableName = DataExtensions.Pluralization.Pluralize(targetType.Name);
+            var tableName = targetType.Name;
 
             return String.Format("{0} FROM {1}", fields, tableName);
         }

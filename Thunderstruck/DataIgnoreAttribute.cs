@@ -5,7 +5,5 @@ using System.Text;
 
 namespace Thunderstruck
 {
-    public class DataIgnoreAttribute : Attribute
-    {
-    }
+    public class DataIgnoreAttribute : Attribute { }
 }
