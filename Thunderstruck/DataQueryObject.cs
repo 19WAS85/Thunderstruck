@@ -16,7 +16,7 @@ namespace Thunderstruck
 
         public DataQueryObject(string projection)
         {
-            _customProjection = projection;
+            _customProjection = String.Format(projection, GetTypeFields(typeof(T)));
         }
 
         public T First(string where = null, object queryParams = null)
@@ -43,10 +43,15 @@ namespace Thunderstruck
             if (_customProjection != null) return _customProjection;
 
             var targetType = typeof(T);
-            var fields = String.Join(", ", DataExtensions.GetValidPropertiesOf(targetType).Select(p => p.Name));
+            var fields = GetTypeFields(targetType);
             var tableName = targetType.Name;
 
             return String.Format("{0} FROM {1}", fields, tableName);
+        }
+
+        private string GetTypeFields(Type targetType)
+        {
+            return String.Join(", ", DataExtensions.GetValidPropertiesOf(targetType).Select(p => p.Name));
         }
 
         private T[] Execute(string query, object queryParams = null)
