@@ -22,8 +22,11 @@ namespace Thunderstruck
         {
             var parameters = _fields.Select(f => String.Concat("@", f));
             var command = String.Format("INSERT INTO {0} ({1}) VALUES ({2})", GetTableName(), Comma(_fields), Comma(parameters));
+            
+            var identity = ExecuteOnDataContext(dataContext, data => data.GetIdentity(command, target));
+            DataExtensions.GetPrimaryKey(_targetType).SetValue(target, identity, null);
 
-            return ExecuteOnDataContext(dataContext, data => data.GetIdentity(command, target));
+            return identity;
         }
 
         public int Update(T target, DataContext dataContext = null)
