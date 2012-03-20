@@ -83,7 +83,7 @@ namespace Thunderstruck
         /// <returns>The last identity value inserted into an identity column in the same scope.</returns>
         public int GetIdentity(string command, object commandParams = null)
         {
-            var identityQuery = String.Concat(command, "; SELECT SCOPE_IDENTITY()");
+            var identityQuery = String.Concat(command, "; SELECT @@IDENTITY");
             var value = CommandToExecute(identityQuery, commandParams, true).ExecuteScalar();
 
             return CastQueryValue<int>(value);

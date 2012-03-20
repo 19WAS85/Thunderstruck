@@ -45,7 +45,7 @@ namespace Thunderstruck
 
                 foreach (var field in readerFields)
                 {
-                    var property = properties.FirstOrDefault(p => p.Name == field);
+                    var property = properties.FirstOrDefault(p => p.Name.ToUpper() == field.ToUpper());
                     if (property == null) continue;
 
                     try
