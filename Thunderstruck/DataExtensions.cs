@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data.SqlClient;
 using System.Data;
-using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 namespace Thunderstruck
@@ -36,7 +33,7 @@ namespace Thunderstruck
 
         #region SqlDataReader
 
-        public static T[] ToArray<T>(this SqlDataReader reader) where T : new()
+        public static T[] ToArray<T>(this IDataReader reader) where T : new()
         {
             var list = new List<T>();
             var properties = typeof(T).GetProperties();
@@ -74,7 +71,7 @@ namespace Thunderstruck
             return list.ToArray();
         }
 
-        private static string[] GetReaderFields(SqlDataReader reader)
+        private static string[] GetReaderFields(IDataReader reader)
         {
             var fields = new String[reader.FieldCount];
 
@@ -87,7 +84,7 @@ namespace Thunderstruck
 
         #region SqlCommand
 
-        public static void AddParameters(this SqlCommand command, object objectParameters)
+        public static void AddParameters(this IDbCommand command, object objectParameters)
         {
             var dictionary = objectParameters as Dictionary<string, object> ?? CreateDictionary(objectParameters);
 
@@ -97,9 +94,10 @@ namespace Thunderstruck
 
                 if (command.CommandText.Contains(parameterName))
                 {
-                    var parameterValue = item.Value ?? DBNull.Value;
-
-                    command.Parameters.AddWithValue(parameterName, parameterValue);
+                    var parameter = command.CreateParameter();
+                    parameter.ParameterName = parameterName;
+                    parameter.Value = item.Value ?? DBNull.Value;
+                    command.Parameters.Add(parameter);
                 }
             }
         }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data.SqlClient;
-using System.Data;
 using System.Configuration;
+using System.Data;
+using System.Data.Common;
 
 namespace Thunderstruck
 {
@@ -12,8 +9,8 @@ namespace Thunderstruck
 
     public class DataContext : IDisposable
     {
-        private SqlConnection _connection;
-        private SqlTransaction _transaction;
+        private IDbConnection _connection;
+        private IDbTransaction _transaction;
 
         static DataContext()
         {
@@ -34,18 +31,16 @@ namespace Thunderstruck
         /// <summary>
         /// Creates a new data context.
         /// </summary>
-        /// <param name="connectionString">Connection string of target database.</param>
+        /// <param name="connectionString">Connection string name of target database.</param>
         /// <param name="transaction">Defines if data context is transactional.</param>
-        public DataContext(string connectionString, Transaction transaction)
+        public DataContext(string connectionStringName, Transaction transaction)
         {
             TransactionMode = transaction;
 
-            if (String.IsNullOrEmpty(connectionString))
-            {
-                connectionString = ConfigurationManager.ConnectionStrings[DefaultConnectionStringName].ConnectionString;
-            }
+            var theConnectionStringName = connectionStringName == null ? DefaultConnectionStringName : connectionStringName;
+            var connectionSettings = ConfigurationManager.ConnectionStrings[theConnectionStringName];
 
-            _connection = new SqlConnection(connectionString);
+            _connection = CreateConnection(connectionSettings);
         }
 
         /// <summary>
@@ -64,7 +59,7 @@ namespace Thunderstruck
         /// <param name="query">Query sql to execute on database.</param>
         /// <param name="queryParams">Object that contains parameters to bind in query.</param>
         /// <returns>An open data reader.</returns>
-        public SqlDataReader Query(string query, object queryParams = null)
+        public IDataReader Query(string query, object queryParams = null)
         {
             return CommandToExecute(query, queryParams, false).ExecuteReader();
         }
@@ -135,7 +130,14 @@ namespace Thunderstruck
             _connection.Close();
         }
 
-        private SqlCommand CommandToExecute(string query, object objectParameters, bool openTransaction)
+        private IDbConnection CreateConnection(ConnectionStringSettings connectionSettings)
+        {
+            var connection = DbProviderFactories.GetFactory(connectionSettings.ProviderName).CreateConnection();
+            connection.ConnectionString = connectionSettings.ConnectionString;
+            return connection;
+        }
+
+        private IDbCommand CommandToExecute(string query, object objectParameters, bool openTransaction)
         {
             try
             {
@@ -147,7 +149,11 @@ namespace Thunderstruck
                 throw new DataException(message, err);
             }
 
-            var command = new SqlCommand { CommandText = query, Connection = _connection, Transaction = _transaction };
+            var command = _connection.CreateCommand();
+            command.CommandText = query;
+            command.Connection = _connection;
+            command.Transaction = _transaction;
+
             if (objectParameters != null) command.AddParameters(objectParameters);
 
             return command;
