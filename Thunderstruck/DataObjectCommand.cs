@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Thunderstruck
 {
-    public class DataCommands<T> where T : new()
+    public class DataObjectCommand<T> where T : new()
     {
         private string _customTableName;
         private Type _targetType;
         private IEnumerable<string> _fields;
 
-        public DataCommands(string tableName = null)
+        public DataObjectCommand(string tableName = null)
         {
             _customTableName = tableName;
             _targetType = typeof(T);

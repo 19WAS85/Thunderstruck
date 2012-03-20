@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace Thunderstruck
 {
-    public class DataQueryObject<T> where T : new()
+    public class DataObjectQuery<T> where T : new()
     {
         private string _customProjection;
 
-        public DataQueryObject() { }
+        public DataObjectQuery() { }
 
-        public DataQueryObject(string projection)
+        public DataObjectQuery(string projection)
         {
             _customProjection = String.Format(projection, GetTypeFields(typeof(T)));
         }
