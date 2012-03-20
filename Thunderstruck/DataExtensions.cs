@@ -120,11 +120,34 @@ namespace Thunderstruck
 
         #region DataContext
 
+        /// <summary>
+        /// Executes a sql query. Avoid.
+        /// </summary>
+        /// <param name="query">Query sql to execute on database.</param>
+        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <returns>An open data reader.</returns>
+
+        /// <summary>
+        /// Executes a sql query and return all results in array.
+        /// </summary>
+        /// <typeparam name="T">Type of object to bind each row of the result.</typeparam>
+        /// <param name="data">Data context to run query.</param>
+        /// <param name="query">Query sql to execute on database.</param>
+        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <returns>All row of query result in array of specified type.</returns>
         public static T[] All<T>(this DataContext data, string query, object queryParams = null) where T : new()
         {
             return data.Query(query, queryParams).ToArray<T>();
         }
 
+        /// <summary>
+        /// Executes a sql query and return first results.
+        /// </summary>
+        /// <typeparam name="T">Type of object to bind first row of the result.</typeparam>
+        /// <param name="data">Data context to run query.</param>
+        /// <param name="query">Query sql to execute on database.</param>
+        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <returns>First row of query result in specified type.</returns>
         public static T First<T>(this DataContext data, string query, object queryParams = null) where T : new()
         {
             return data.All<T>(query, queryParams).FirstOrDefault();
