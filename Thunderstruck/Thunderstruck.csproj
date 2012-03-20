@@ -39,12 +39,12 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataCommands.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="DataExtensions.cs" />
     <Compile Include="DataIgnoreAttribute.cs" />
+    <Compile Include="DataObjectCommand.cs" />
+    <Compile Include="DataObjectQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataQueryObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
