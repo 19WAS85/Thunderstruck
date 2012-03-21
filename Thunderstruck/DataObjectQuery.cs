@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Thunderstruck.Internal;
 
 namespace Thunderstruck
 {
@@ -46,7 +47,7 @@ namespace Thunderstruck
 
         private string GetTypeFields(Type targetType)
         {
-            return String.Join(", ", DataExtensions.GetValidPropertiesOf(targetType).Select(p => p.Name));
+            return String.Join(", ", DataHelpers.GetValidPropertiesOf(targetType).Select(p => p.Name));
         }
 
         private T[] Execute(string query, object queryParams = null)
