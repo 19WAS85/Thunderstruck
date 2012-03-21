@@ -39,7 +39,9 @@ namespace Thunderstruck
             var connectionName = connectionStringName == null ? DefaultConnectionStringName : connectionStringName;
             var settings = ConfigurationManager.ConnectionStrings[connectionName];
 
-            Provider = new ProviderBuilder().Build(settings.ProviderName);
+            if (CustomProviderType == null) Provider = new ProviderBuilder().Build(settings.ProviderName);
+            else Provider = Activator.CreateInstance(CustomProviderType) as IDataProvider;
+
             Provider.CreateConnection(settings, transaction);
         }
 
@@ -52,6 +54,11 @@ namespace Thunderstruck
         /// Defines the name of default connection string on application config.
         /// </summary>
         public static string DefaultConnectionStringName { get; set; }
+
+        /// <summary>
+        /// Defines the type of custom provider.
+        /// </summary>
+        public static Type CustomProviderType { get; set; }
 
         /// <summary>
         /// Defines the transaction mode of data context.
