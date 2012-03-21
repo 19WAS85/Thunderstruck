@@ -10,10 +10,12 @@ namespace Thunderstruck
 
         public DataObjectQuery() { }
 
-        public DataObjectQuery(string projection)
+        public DataObjectQuery(string projection) : this()
         {
             _customProjection = String.Format(projection, GetTypeFields(typeof(T)));
         }
+
+        public DataContext DataContext { get; private set; }
 
         public T First(string where = null, object queryParams = null)
         {
@@ -34,6 +36,12 @@ namespace Thunderstruck
             return Execute(query, queryParams);
         }
 
+        public DataObjectQuery<T> With(DataContext dataContext)
+        {
+            DataContext = dataContext;
+            return this;
+        }
+
         public string GetProjection()
         {
             if (_customProjection != null) return _customProjection;
@@ -52,7 +60,16 @@ namespace Thunderstruck
 
         private T[] Execute(string query, object queryParams = null)
         {
-            using (var data = new DataContext(Transaction.No)) return data.All<T>(query, queryParams);
+            var dataContext = DataContext ?? new DataContext(Transaction.No);
+
+            try
+            {
+                return dataContext.All<T>(query, queryParams);
+            }
+            finally
+            {
+                if (DataContext == null) dataContext.Dispose();
+            }
         }
     }
 }
