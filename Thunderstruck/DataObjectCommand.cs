@@ -25,7 +25,8 @@ namespace Thunderstruck
             var command = String.Format("INSERT INTO {0} ({1}) VALUES ({2})", GetTableName(), Comma(_fields), Comma(parameters));
 
             var identity = data.ExecuteGetIdentity(command, target);
-            DataHelpers.GetPrimaryKey(_targetType).SetValue(target, identity, null);
+            var primaryKey = DataHelpers.GetPrimaryKey(_targetType);
+            if (primaryKey != null) primaryKey.SetValue(target, identity, null);
 
             return identity;
         }

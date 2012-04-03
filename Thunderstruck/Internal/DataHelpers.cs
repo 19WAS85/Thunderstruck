@@ -24,7 +24,8 @@ namespace Thunderstruck.Internal
 
         internal static PropertyInfo GetPrimaryKey(Type type)
         {
-            return GetValidPropertiesOf(type).First();
+            var validProperties = GetValidPropertiesOf(type);
+            return validProperties.FirstOrDefault(p => p.Name == "Id") ?? validProperties.First();
         }
 
         internal static Dictionary<string, object> CreateDictionary(object target)
@@ -40,42 +41,64 @@ namespace Thunderstruck.Internal
             return dictionary;
         }
 
-        internal static T[] DataReaderToArray<T>(IDataReader reader) where T : new()
+        internal static T[] DataReaderToObjectArray<T>(IDataReader reader) where T : new()
         {
-            var list = new List<T>();
-            var properties = typeof(T).GetProperties();
-            var readerFields = GetDataReaderFields(reader);
-
-            while (reader.Read())
+            try
             {
-                var item = new T();
+                var list = new List<T>();
+                var properties = typeof(T).GetProperties();
+                var readerFields = GetDataReaderFields(reader);
 
-                foreach (var field in readerFields)
+                while (reader.Read())
                 {
-                    var property = properties.FirstOrDefault(p => p.Name.ToUpper() == field.ToUpper());
-                    if (property == null) continue;
+                    var item = new T();
 
-                    try
+                    foreach (var field in readerFields)
                     {
-                        var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                        object safeValue = (reader[field] == null) ? null : Convert.ChangeType(reader[field], propertyType);
-                        property.SetValue(item, safeValue, null);
-                    }
-                    catch (FormatException err)
-                    {
-                        var message = String.Format("Erro to convert column {0} to property {1} {2}.{3}",
-                            property.Name, property.PropertyType.Name, typeof(T).Name, property.Name);
+                        var property = properties.FirstOrDefault(p => p.Name.ToUpper() == field.ToUpper());
+                        if (property == null || !property.CanWrite) continue;
 
-                        throw new FormatException(message, err);
+                        try
+                        {
+                            var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                            object safeValue = (reader[field] == null || reader[field] is DBNull) ? null : Convert.ChangeType(reader[field], propertyType);
+                            property.SetValue(item, safeValue, null);
+                        }
+                        catch (FormatException err)
+                        {
+                            var message = String.Format("Erro to convert column {0} to property {1} {2}.{3}",
+                                property.Name, property.PropertyType.Name, typeof(T).Name, property.Name);
+
+                            throw new FormatException(message, err);
+                        }
                     }
+
+                    list.Add(item);
                 }
 
-                list.Add(item);
+                return list.ToArray();
             }
+            finally
+            {
+                reader.Close();
+            }
+        }
 
-            reader.Close();
-
-            return list.ToArray();
+        internal static T[] DataReaderToPrimaryArray<T>(IDataReader reader)
+        {
+            try
+            {
+                var list = new List<T>();
+                while (reader.Read())
+                {
+                    list.Add(CastTo<T>(reader[0]));
+                }
+                return list.ToArray();
+            }
+            finally
+            {
+                reader.Close();
+            }
         }
 
         internal static string[] GetDataReaderFields(IDataReader reader)
@@ -85,6 +108,12 @@ namespace Thunderstruck.Internal
             for (int i = 0; i < reader.FieldCount; i++) fields[i] = reader.GetName(i);
 
             return fields;
+        }
+
+        internal static T CastTo<T>(object value)
+        {
+            if (value is DBNull) return default(T);
+            else return (T) Convert.ChangeType(value, typeof(T));
         }
     }
 }

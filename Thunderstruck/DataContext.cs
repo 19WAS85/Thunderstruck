@@ -104,7 +104,7 @@ namespace Thunderstruck
         /// <param name="query">Query sql to execute on database.</param>
         /// <param name="queryParams">Object that contains parameters to bind in query.</param>
         /// <returns>The value of first column of the first row.</returns>
-        public object ExecuteGetValue(string query, object queryParams = null)
+        public object GetValue(string query, object queryParams = null)
         {
             return Provider.ExecuteGetValue(query, queryParams);
         }
@@ -116,11 +116,20 @@ namespace Thunderstruck
         /// <param name="query">Query sql to execute on database.</param>
         /// <param name="queryParams">Object that contains parameters to bind in query.</param>
         /// <returns>The value of first column of the first row of the type specified on T.</returns>
-        public T ExecuteValue<T>(string query, object queryParams = null)
+        public T GetValue<T>(string query, object queryParams = null)
         {
-            var value = ExecuteGetValue(query, queryParams);
-            if (value is DBNull) return default(T);
-            else return (T) Convert.ChangeType(value, typeof(T));
+            return DataHelpers.CastTo<T>(GetValue(query, queryParams));
+        }
+
+        /// <summary>
+        /// Executes a sql query and returns the value of first column. 
+        /// </summary>
+        /// <param name="query">Query sql to execute on database.</param>
+        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <returns>The values of first column.</returns>
+        public T[] GetValues<T>(string query, object queryParams = null)
+        {
+            return DataHelpers.DataReaderToPrimaryArray<T>(Query(query, queryParams));
         }
 
         /// <summary>
@@ -132,7 +141,7 @@ namespace Thunderstruck
         /// <returns>All row of query result in array of specified type.</returns>
         public T[] All<T>(string query, object queryParams = null) where T : new()
         {
-            return DataHelpers.DataReaderToArray<T>(Query(query, queryParams));
+            return DataHelpers.DataReaderToObjectArray<T>(Query(query, queryParams));
         }
 
         /// <summary>
@@ -144,7 +153,7 @@ namespace Thunderstruck
         /// <returns>First row of query result in specified type.</returns>
         public T First<T>(string query, object queryParams = null) where T : new()
         {
-            return DataHelpers.DataReaderToArray<T>(Query(query, queryParams)).FirstOrDefault();
+            return DataHelpers.DataReaderToObjectArray<T>(Query(query, queryParams)).FirstOrDefault();
         }
 
         /// <summary>
