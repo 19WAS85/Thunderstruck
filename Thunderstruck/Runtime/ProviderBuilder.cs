@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Thunderstruck.Provider;
 
-namespace Thunderstruck.Internal
+namespace Thunderstruck.Runtime
 {
     internal class ProviderBuilder
     {

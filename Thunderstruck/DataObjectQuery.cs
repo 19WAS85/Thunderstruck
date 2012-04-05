@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Linq;
-using Thunderstruck.Internal;
+using Thunderstruck.Runtime;
 
 namespace Thunderstruck
 {
     public class DataObjectQuery<T> where T : new()
     {
+        private readonly DataRuntimeObject<T> _runtimeObject;
         private string _customProjection;
 
-        public DataObjectQuery() { }
+        public DataObjectQuery()
+        {
+            _runtimeObject = new DataRuntimeObject<T>();
+        }
 
         public DataObjectQuery(string projection) : this()
         {
-            _customProjection = String.Format(projection, GetTypeFields(typeof(T)));
+            _customProjection = String.Format(projection, _runtimeObject.GetCommaFields());
         }
 
         public DataContext DataContext { get; private set; }
@@ -47,15 +51,10 @@ namespace Thunderstruck
             if (_customProjection != null) return _customProjection;
 
             var targetType = typeof(T);
-            var fields = GetTypeFields(targetType);
+            var fields = _runtimeObject.GetCommaFields();
             var tableName = targetType.Name;
 
             return String.Format("{0} FROM {1}", fields, tableName);
-        }
-
-        private string GetTypeFields(Type targetType)
-        {
-            return String.Join(", ", DataHelpers.GetValidPropertiesOf(targetType).Select(p => p.Name));
         }
 
         private T[] Execute(string query, object queryParams = null)

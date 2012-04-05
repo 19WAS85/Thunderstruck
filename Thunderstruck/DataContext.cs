@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Data;
 using System.Linq;
-using Thunderstruck.Internal;
+using Thunderstruck.Runtime;
 using Thunderstruck.Provider;
 
 namespace Thunderstruck

@@ -31,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Thunderstruck.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -41,17 +42,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContext.cs" />
-    <Compile Include="Internal\DataHelpers.cs" />
     <Compile Include="DataIgnoreAttribute.cs" />
     <Compile Include="DataObjectCommand.cs" />
     <Compile Include="DataObjectQuery.cs" />
-    <Compile Include="Internal\ParametersBinder.cs" />
-    <Compile Include="Internal\ProviderBuilder.cs" />
     <Compile Include="Provider\IDataProvider.cs" />
     <Compile Include="Provider\OracleProvider.cs" />
     <Compile Include="Provider\DefaultProvider.cs" />
     <Compile Include="Provider\SqlProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\DataHelpers.cs" />
+    <Compile Include="Runtime\ParametersBinder.cs" />
+    <Compile Include="Runtime\ProviderBuilder.cs" />
+    <Compile Include="Runtime\DataRuntimeObject.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

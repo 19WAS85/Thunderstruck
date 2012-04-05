@@ -4,43 +4,10 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 
-namespace Thunderstruck.Internal
+namespace Thunderstruck.Runtime
 {
     internal static class DataHelpers
     {
-        internal static PropertyInfo[] GetValidPropertiesOf(Type type)
-        {
-            var ignore = typeof(DataIgnoreAttribute);
-
-            return type
-                .GetProperties()
-                .Where(p =>
-                    !p.PropertyType.IsInterface &&
-                    p.PropertyType.Name != "DataObjectCommand`1" &&
-                    p.PropertyType.Name != "DataObjectQuery`1" &&
-                    p.GetCustomAttributes(ignore, false).Length == 0)
-                .ToArray();
-        }
-
-        internal static PropertyInfo GetPrimaryKey(Type type)
-        {
-            var validProperties = GetValidPropertiesOf(type);
-            return validProperties.FirstOrDefault(p => p.Name == "Id") ?? validProperties.First();
-        }
-
-        internal static Dictionary<string, object> CreateDictionary(object target)
-        {
-            var dictionary = new Dictionary<string, object>();
-            var validProperties = GetValidPropertiesOf(target.GetType());
-
-            foreach (var p in validProperties)
-            {
-                dictionary.Add(p.Name, p.GetValue(target, null));
-            }
-
-            return dictionary;
-        }
-
         internal static T[] DataReaderToObjectArray<T>(IDataReader reader) where T : new()
         {
             try

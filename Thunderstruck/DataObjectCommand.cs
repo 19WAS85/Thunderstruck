@@ -1,32 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Thunderstruck.Internal;
+using Thunderstruck.Runtime;
+using Thunderstruck.Provider;
 
 namespace Thunderstruck
 {
     public class DataObjectCommand<T> where T : new()
     {
-        private string _customTableName;
-        private Type _targetType;
-        private IEnumerable<string> _fields;
+        private const string InsertSql = "INSERT INTO {0} ({1}) VALUES ({2})";
+        private const string UpdateSql = "UPDATE {0} SET {1} WHERE {2} = {3}{2}";
+        private const string DeleteSql = "DELETE FROM {0} Where {1} = {2}{1}";
+
+        private readonly DataRuntimeObject<T> _runtimeObject;
+        private readonly string _customTableName;
 
         public DataObjectCommand(string tableName = null)
         {
+            _runtimeObject = new DataRuntimeObject<T>();
             _customTableName = tableName;
-            _targetType = typeof(T);
-            _fields = GetFieldsOf(_targetType);
         }
 
         public int Insert(T target, DataContext dataContext = null)
         {
             var data = dataContext ?? CreateDataContext();
-            var parameters = _fields.Select(f => String.Concat(data.Provider.ParameterIdentifier, f));
-            var command = String.Format("INSERT INTO {0} ({1}) VALUES ({2})", GetTableName(), Comma(_fields), Comma(parameters));
+            var fields = _runtimeObject.GetCommaFields();
+            var parameters = _runtimeObject.CreateCommaParameters(data.Provider.ParameterIdentifier);
+            var command = String.Format(InsertSql, GetTableName(), fields, parameters);
 
             var identity = data.ExecuteGetIdentity(command, target);
-            var primaryKey = DataHelpers.GetPrimaryKey(_targetType);
-            if (primaryKey != null) primaryKey.SetValue(target, identity, null);
+            _runtimeObject.GetPrimaryKey().SetValue(target, identity, null);
 
             return identity;
         }
@@ -34,38 +37,23 @@ namespace Thunderstruck
         public int Update(T target, DataContext dataContext = null)
         {
             var data = dataContext ?? CreateDataContext();
-            var fieldsAndValues = GetFieldsOf(_targetType).Select(f => String.Concat(f, " = ", data.Provider.ParameterIdentifier, f));
-            var primaryKey = DataHelpers.GetPrimaryKey(_targetType);
-
-            var command = String.Format("UPDATE {0} SET {1} WHERE {2} = {3}{2}",
-                GetTableName(), Comma(fieldsAndValues), primaryKey.Name, data.Provider.ParameterIdentifier);
-
+            var fields = _runtimeObject.CreateCommaFieldsAndParameters(data.Provider.ParameterIdentifier);
+            var primaryKey = _runtimeObject.GetPrimaryKey();
+            var command = String.Format(UpdateSql, GetTableName(), fields, primaryKey.Name, data.Provider.ParameterIdentifier);
             return data.Execute(command, target);
         }
 
         public int Delete(T target, DataContext dataContext = null)
         {
             var data = dataContext ?? CreateDataContext();
-            var primaryKey = DataHelpers.GetPrimaryKey(_targetType);
-            var command = String.Format("DELETE FROM {0} Where {1} = {2}{1}",
-                GetTableName(), primaryKey.Name, data.Provider.ParameterIdentifier);
-
+            var primaryKey = _runtimeObject.GetPrimaryKey();
+            var command = String.Format(DeleteSql, GetTableName(), primaryKey.Name, data.Provider.ParameterIdentifier);
             return data.Execute(command, target);
         }
 
         private string GetTableName()
         {
-            return _customTableName ?? _targetType.Name;
-        }
-
-        private static IEnumerable<string> GetFieldsOf(Type targetType)
-        {
-            return DataHelpers.GetValidPropertiesOf(targetType).Select(p => p.Name).Skip(1);
-        }
-
-        private string Comma(IEnumerable<string> list)
-        {
-            return String.Join(", ", list);
+            return _customTableName ?? _runtimeObject.TypeName;
         }
 
         private DataContext CreateDataContext()
