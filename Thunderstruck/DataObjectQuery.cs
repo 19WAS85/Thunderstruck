@@ -16,7 +16,7 @@ namespace Thunderstruck
 
         public DataObjectQuery(string projection) : this()
         {
-            _customProjection = String.Format(projection, _runtimeObject.GetCommaFields());
+            _customProjection = String.Format(projection, _runtimeObject.GetCommaFields(includePrimaryKey: true));
         }
 
         public DataContext DataContext { get; private set; }
@@ -51,7 +51,7 @@ namespace Thunderstruck
             if (_customProjection != null) return _customProjection;
 
             var targetType = typeof(T);
-            var fields = _runtimeObject.GetCommaFields();
+            var fields = _runtimeObject.GetCommaFields(includePrimaryKey: true);
             var tableName = targetType.Name;
 
             return String.Format("{0} FROM {1}", fields, tableName);

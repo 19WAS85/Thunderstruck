@@ -24,7 +24,7 @@ namespace Thunderstruck
         public int Insert(T target, DataContext dataContext = null)
         {
             var data = dataContext ?? CreateDataContext();
-            var fields = _runtimeObject.GetCommaFields();
+            var fields = _runtimeObject.GetCommaFields(includePrimaryKey: false);
             var parameters = _runtimeObject.CreateCommaParameters(data.Provider.ParameterIdentifier);
             var command = String.Format(InsertSql, GetTableName(), fields, parameters);
 

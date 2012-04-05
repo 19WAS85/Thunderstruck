@@ -13,8 +13,6 @@ namespace Thunderstruck.Runtime
         private static IList<PropertyInfo> _allProperties;
         private static IList<PropertyInfo> _validProperties;
         private static PropertyInfo _primaryKey;
-        private static IList<string> _fields;
-        private static string _commaFields;
 
         public string TypeName
         {
@@ -53,32 +51,22 @@ namespace Thunderstruck.Runtime
             return _primaryKey;
         }
 
-        public IList<string> GetFields()
+        public IList<string> GetFields(bool includePrimaryKey)
         {
-            if (_fields == null)
-            {
-                var primaryKey = GetPrimaryKey();
-                var fields = GetValidProperties().ToList();
-                fields.Remove(primaryKey);
-                _fields = fields.Select(p => p.Name).ToList();
-            }
-
-            return _fields;
+            var fields = GetValidProperties().ToList();
+            if(!includePrimaryKey) fields.Remove(GetPrimaryKey());
+            return fields.Select(p => p.Name).ToList();
         }
 
-        public string GetCommaFields()
+        public string GetCommaFields(bool includePrimaryKey)
         {
-            if (_commaFields == null)
-            {
-                _commaFields = Comma(GetFields());
-            }
-
-            return _commaFields;
+            return Comma(GetFields(includePrimaryKey));
         }
 
         public IList<string> CreateParameters(string paramIdentifier)
         {
-            return GetFields().Select(f => String.Concat(paramIdentifier, f)).ToList();
+            var fields = GetFields(includePrimaryKey: false);
+            return fields.Select(f => String.Concat(paramIdentifier, f)).ToList();
         }
 
         public string CreateCommaParameters(string paramIdentifier)
@@ -88,7 +76,8 @@ namespace Thunderstruck.Runtime
 
         public string CreateCommaFieldsAndParameters(string paramIdentifier)
         {
-            return Comma(GetFields().Select(f => CreateFieldAndParameter(f, paramIdentifier)));
+            var fields = GetFields(includePrimaryKey: false);
+            return Comma(fields.Select(f => CreateFieldAndParameter(f, paramIdentifier)));
         }
 
         private bool IsValidProperty(PropertyInfo property)
