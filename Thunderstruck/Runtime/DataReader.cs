@@ -1,22 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Reflection;
+using System.Text;
+using System.Data;
 
 namespace Thunderstruck.Runtime
 {
-    internal static class DataHelpers
+    public class DataReader
     {
-        internal static T[] DataReaderToObjectArray<T>(IDataReader reader) where T : new()
+        private IDataReader _dataReader;
+
+        public DataReader(IDataReader dataReader)
+        {
+            _dataReader = dataReader;
+        }
+
+        public T[] ToObjectArray<T>() where T : new()
         {
             try
             {
                 var list = new List<T>();
                 var properties = typeof(T).GetProperties();
-                var readerFields = GetDataReaderFields(reader);
+                var readerFields = GetFields();
 
-                while (reader.Read())
+                while (_dataReader.Read())
                 {
                     var item = new T();
 
@@ -28,7 +35,7 @@ namespace Thunderstruck.Runtime
                         try
                         {
                             var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                            object safeValue = (reader[field] == null || reader[field] is DBNull) ? null : Convert.ChangeType(reader[field], propertyType);
+                            object safeValue = (_dataReader[field] == null || _dataReader[field] is DBNull) ? null : Convert.ChangeType(_dataReader[field], propertyType);
                             property.SetValue(item, safeValue, null);
                         }
                         catch (FormatException err)
@@ -47,37 +54,35 @@ namespace Thunderstruck.Runtime
             }
             finally
             {
-                reader.Close();
+                _dataReader.Close();
             }
         }
 
-        internal static T[] DataReaderToPrimaryArray<T>(IDataReader reader)
+        public T[] ToArray<T>()
         {
             try
             {
                 var list = new List<T>();
-                while (reader.Read())
+                while (_dataReader.Read())
                 {
-                    list.Add(CastTo<T>(reader[0]));
+                    list.Add(CastTo<T>(_dataReader[0]));
                 }
                 return list.ToArray();
             }
             finally
             {
-                reader.Close();
+                _dataReader.Close();
             }
         }
 
-        internal static string[] GetDataReaderFields(IDataReader reader)
+        public string[] GetFields()
         {
-            var fields = new String[reader.FieldCount];
-
-            for (int i = 0; i < reader.FieldCount; i++) fields[i] = reader.GetName(i);
-
+            var fields = new String[_dataReader.FieldCount];
+            for (int i = 0; i < _dataReader.FieldCount; i++) fields[i] = _dataReader.GetName(i);
             return fields;
         }
 
-        internal static T CastTo<T>(object value)
+        public static T CastTo<T>(object value)
         {
             if (value is DBNull) return default(T);
             else return (T) Convert.ChangeType(value, typeof(T));

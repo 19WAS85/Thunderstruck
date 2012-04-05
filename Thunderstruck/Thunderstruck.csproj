@@ -50,10 +50,10 @@
     <Compile Include="Provider\DefaultProvider.cs" />
     <Compile Include="Provider\SqlProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Runtime\DataHelpers.cs" />
     <Compile Include="Runtime\ParametersBinder.cs" />
     <Compile Include="Runtime\ProviderBuilder.cs" />
     <Compile Include="Runtime\DataRuntimeObject.cs" />
+    <Compile Include="Runtime\DataReader.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

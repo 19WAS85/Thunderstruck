@@ -118,7 +118,8 @@ namespace Thunderstruck
         /// <returns>The value of first column of the first row of the type specified on T.</returns>
         public T GetValue<T>(string query, object queryParams = null)
         {
-            return DataHelpers.CastTo<T>(GetValue(query, queryParams));
+            var result = GetValue(query, queryParams);
+            return DataReader.CastTo<T>(result);
         }
 
         /// <summary>
@@ -129,7 +130,8 @@ namespace Thunderstruck
         /// <returns>The values of first column.</returns>
         public T[] GetValues<T>(string query, object queryParams = null)
         {
-            return DataHelpers.DataReaderToPrimaryArray<T>(Query(query, queryParams));
+            var data = Query(query, queryParams);
+            return new DataReader(data).ToArray<T>();
         }
 
         /// <summary>
@@ -141,7 +143,8 @@ namespace Thunderstruck
         /// <returns>All row of query result in array of specified type.</returns>
         public T[] All<T>(string query, object queryParams = null) where T : new()
         {
-            return DataHelpers.DataReaderToObjectArray<T>(Query(query, queryParams));
+            var data = Query(query, queryParams);
+            return new DataReader(data).ToObjectArray<T>();
         }
 
         /// <summary>
@@ -153,7 +156,8 @@ namespace Thunderstruck
         /// <returns>First row of query result in specified type.</returns>
         public T First<T>(string query, object queryParams = null) where T : new()
         {
-            return DataHelpers.DataReaderToObjectArray<T>(Query(query, queryParams)).FirstOrDefault();
+            var data = Query(query, queryParams);
+            return new DataReader(data).ToObjectArray<T>().FirstOrDefault();
         }
 
         /// <summary>
