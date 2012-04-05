@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Data;
 
-namespace Thunderstruck.Strategy
+namespace Thunderstruck.Provider
 {
     public interface IDataProvider : IDisposable
     {

@@ -47,10 +47,10 @@
     <Compile Include="DataObjectQuery.cs" />
     <Compile Include="Internal\ParametersBinder.cs" />
     <Compile Include="Internal\ProviderBuilder.cs" />
+    <Compile Include="Provider\IDataProvider.cs" />
     <Compile Include="Provider\OracleProvider.cs" />
     <Compile Include="Provider\DefaultProvider.cs" />
     <Compile Include="Provider\SqlProvider.cs" />
-    <Compile Include="Strategy\IDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
