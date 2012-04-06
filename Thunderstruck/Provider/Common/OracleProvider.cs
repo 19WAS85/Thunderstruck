@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace Thunderstruck.Provider
+namespace Thunderstruck.Provider.Common
 {
     public class OracleProvider : DefaultProvider
     {

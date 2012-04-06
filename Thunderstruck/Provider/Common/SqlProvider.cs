@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Thunderstruck.Provider
+namespace Thunderstruck.Provider.Common
 {
     public class SqlProvider : DefaultProvider
     {

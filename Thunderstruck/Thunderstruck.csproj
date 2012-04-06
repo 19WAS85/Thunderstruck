@@ -45,10 +45,10 @@
     <Compile Include="DataIgnoreAttribute.cs" />
     <Compile Include="DataObjectCommand.cs" />
     <Compile Include="DataObjectQuery.cs" />
+    <Compile Include="Provider\Common\OracleProvider.cs" />
+    <Compile Include="Provider\Common\SqlProvider.cs" />
     <Compile Include="Provider\IDataProvider.cs" />
-    <Compile Include="Provider\OracleProvider.cs" />
     <Compile Include="Provider\DefaultProvider.cs" />
-    <Compile Include="Provider\SqlProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\ConnectionStringBuffer.cs" />
     <Compile Include="Runtime\ParametersBinder.cs" />
