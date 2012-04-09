@@ -8,7 +8,7 @@ namespace Thunderstruck.Runtime
 {
     public class DataRuntimeObject<T>
     {
-        private static readonly Type Ignore = typeof(DataIgnoreAttribute);
+        private static readonly Type Ignore = typeof(IgnoreAttribute);
         private static readonly Type _type = typeof(T);
         private static IList<PropertyInfo> _allProperties;
         private static IList<PropertyInfo> _validProperties;

@@ -23,32 +23,50 @@ namespace Thunderstruck
 
         public int Insert(T target, DataContext dataContext = null)
         {
-            var data = dataContext ?? CreateDataContext();
-            var fields = _runtimeObject.GetCommaFields(includePrimaryKey: false);
-            var parameters = _runtimeObject.CreateCommaParameters(data.Provider.ParameterIdentifier);
-            var command = String.Format(InsertSql, GetTableName(), fields, parameters);
-
-            var identity = data.ExecuteGetIdentity(command, target);
-            _runtimeObject.GetPrimaryKey().SetValue(target, identity, null);
-
-            return identity;
+            return ExecuteOnDataContext(dataContext, data =>
+            {
+                var fields = _runtimeObject.GetCommaFields(includePrimaryKey: false);
+                var parameters = _runtimeObject.CreateCommaParameters(data.Provider.ParameterIdentifier);
+                var command = String.Format(InsertSql, GetTableName(), fields, parameters);
+                var identity = data.ExecuteGetIdentity(command, target);
+                _runtimeObject.GetPrimaryKey().SetValue(target, identity, null);
+                return identity;
+            });
         }
 
         public int Update(T target, DataContext dataContext = null)
         {
-            var data = dataContext ?? CreateDataContext();
-            var fields = _runtimeObject.CreateCommaFieldsAndParameters(data.Provider.ParameterIdentifier);
-            var primaryKey = _runtimeObject.GetPrimaryKey();
-            var command = String.Format(UpdateSql, GetTableName(), fields, primaryKey.Name, data.Provider.ParameterIdentifier);
-            return data.Execute(command, target);
+            return ExecuteOnDataContext(dataContext, data =>
+            {
+                var fields = _runtimeObject.CreateCommaFieldsAndParameters(data.Provider.ParameterIdentifier);
+                var primaryKey = _runtimeObject.GetPrimaryKey();
+                var command = String.Format(UpdateSql, GetTableName(), fields, primaryKey.Name, data.Provider.ParameterIdentifier);
+                return data.Execute(command, target);
+            });
         }
 
         public int Delete(T target, DataContext dataContext = null)
         {
+            return ExecuteOnDataContext(dataContext, data =>
+            {
+                var primaryKey = _runtimeObject.GetPrimaryKey();
+                var command = String.Format(DeleteSql, GetTableName(), primaryKey.Name, data.Provider.ParameterIdentifier);
+                return data.Execute(command, target);
+            });
+        }
+
+        private int ExecuteOnDataContext(DataContext dataContext, Func<DataContext, int> function)
+        {
             var data = dataContext ?? CreateDataContext();
-            var primaryKey = _runtimeObject.GetPrimaryKey();
-            var command = String.Format(DeleteSql, GetTableName(), primaryKey.Name, data.Provider.ParameterIdentifier);
-            return data.Execute(command, target);
+
+            try
+            {
+                return function(data);
+            }
+            finally
+            {
+                if (dataContext == null) data.Dispose();
+            }
         }
 
         private string GetTableName()

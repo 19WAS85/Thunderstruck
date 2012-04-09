@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Thunderstruck.Runtime;
 using Thunderstruck.Provider;
+using System.Collections.Generic;
 
 namespace Thunderstruck
 {
@@ -121,10 +122,10 @@ namespace Thunderstruck
         /// <param name="query">Query sql to execute on database.</param>
         /// <param name="queryParams">Object that contains parameters to bind in query.</param>
         /// <returns>The values of first column.</returns>
-        public T[] GetValues<T>(string query, object queryParams = null)
+        public IList<T> GetValues<T>(string query, object queryParams = null)
         {
             var data = Query(query, queryParams);
-            return new DataReader(data).ToArray<T>();
+            return new DataReader(data).ToList<T>();
         }
 
         /// <summary>
@@ -134,10 +135,10 @@ namespace Thunderstruck
         /// <param name="query">Query sql to execute on database.</param>
         /// <param name="queryParams">Object that contains parameters to bind in query.</param>
         /// <returns>All row of query result in array of specified type.</returns>
-        public T[] All<T>(string query, object queryParams = null) where T : new()
+        public IList<T> All<T>(string query, object queryParams = null) where T : new()
         {
             var data = Query(query, queryParams);
-            return new DataReader(data).ToObjectArray<T>();
+            return new DataReader(data).ToObjectList<T>();
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace Thunderstruck
         public T First<T>(string query, object queryParams = null) where T : new()
         {
             var data = Query(query, queryParams);
-            return new DataReader(data).ToObjectArray<T>().FirstOrDefault();
+            return new DataReader(data).ToObjectList<T>().FirstOrDefault();
         }
 
         /// <summary>

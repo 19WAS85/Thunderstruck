@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Thunderstruck.Runtime;
+using System.Collections.Generic;
 
 namespace Thunderstruck
 {
@@ -26,14 +27,14 @@ namespace Thunderstruck
             return Top(1, where, queryParams).FirstOrDefault();
         }
 
-        public T[] Top(int count, string where = null, object queryParams = null)
+        public IList<T> Top(int count, string where = null, object queryParams = null)
         {
             var query = String.Format("SELECT TOP {0} {1} {2}", count, GetProjection(), where);
 
             return Execute(query, queryParams);
         }
 
-        public T[] All(string where = null, object queryParams = null)
+        public IList<T> All(string where = null, object queryParams = null)
         {
             var query = String.Format("SELECT {0} {1}", GetProjection(), where);
 
@@ -57,7 +58,7 @@ namespace Thunderstruck
             return String.Format("{0} FROM {1}", fields, tableName);
         }
 
-        private T[] Execute(string query, object queryParams = null)
+        private IList<T> Execute(string query, object queryParams = null)
         {
             var dataContext = DataContext ?? new DataContext(Transaction.No);
 

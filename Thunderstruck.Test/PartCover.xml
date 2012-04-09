@@ -1,0 +1,8 @@
+<PartCoverSettings>
+  <Target>D:\Labs\Thunderstruck\Thunderstruck.Test\bin\Debug\Thunderstruck.Test.exe</Target>
+  <TargetWorkDir>D:\Labs\Thunderstruck\Thunderstruck.Test\bin\Debug</TargetWorkDir>
+  <TargetArgs>
+  </TargetArgs>
+  <Rule>+[Thunderstruck]*</Rule>
+  <Rule>-[Thunderstruck]Thunderstruck.Provider.Common.*</Rule>
+</PartCoverSettings>

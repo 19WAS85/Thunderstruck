@@ -2,19 +2,20 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0DC5AB48-1DA5-4185-A18E-46C111A82454}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{661CA18A-127A-4091-9A41-1A8D8D3D2FCF}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Thunderstruck</RootNamespace>
-    <AssemblyName>Thunderstruck</AssemblyName>
+    <RootNamespace>Thunderstruck.Test</RootNamespace>
+    <AssemblyName>Thunderstruck.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,40 +24,50 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Thunderstruck.xml</DocumentationFile>
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Shakedown">
+      <HintPath>..\References\Shakedown.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataContext.cs" />
-    <Compile Include="IgnoreAttribute.cs" />
-    <Compile Include="DataObjectCommand.cs" />
-    <Compile Include="DataObjectQuery.cs" />
-    <Compile Include="Provider\Common\OracleProvider.cs" />
-    <Compile Include="Provider\Common\SqlProvider.cs" />
-    <Compile Include="Provider\IDataProvider.cs" />
-    <Compile Include="Provider\DefaultProvider.cs" />
+    <Compile Include="Cenarios\DataContextTest.cs" />
+    <Compile Include="Cenarios\DataObjectsTest.cs" />
+    <Compile Include="Dependencies\AnotherSqlProvider.cs" />
+    <Compile Include="Dependencies\Car.cs" />
+    <Compile Include="Dependencies\ErrorCar.cs" />
+    <Compile Include="Dependencies\Manufacturer.cs" />
+    <Compile Include="Runner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Runtime\ConnectionStringBuffer.cs" />
-    <Compile Include="Runtime\ParametersBinder.cs" />
-    <Compile Include="Runtime\DataRuntimeObject.cs" />
-    <Compile Include="Runtime\DataReader.cs" />
-    <Compile Include="Runtime\ProviderResolver.cs" />
+    <Compile Include="Dependencies\TestEnvironment.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Thunderstruck\Thunderstruck.csproj">
+      <Project>{0DC5AB48-1DA5-4185-A18E-46C111A82454}</Project>
+      <Name>Thunderstruck</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PartCover.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -7,10 +7,11 @@ namespace Thunderstruck.Provider
 {
     public abstract class DefaultProvider : IDataProvider
     {
-        private IDbConnection _connection;
-        private IDbTransaction _transaction;
+        public IDbConnection DbConnection { get; private set; }
+
+        public IDbTransaction DbTransaction { get; private set; }
         
-        public Transaction TransactionMode { get; set; }
+        public Transaction TransactionMode { get; private set; }
 
         public abstract string ParameterIdentifier { get; }
 
@@ -18,8 +19,8 @@ namespace Thunderstruck.Provider
         {
             TransactionMode = transaction;
 
-            _connection = DbProviderFactories.GetFactory(connectionSettings.ProviderName).CreateConnection();
-            _connection.ConnectionString = connectionSettings.ConnectionString;
+            DbConnection = DbProviderFactories.GetFactory(connectionSettings.ProviderName).CreateConnection();
+            DbConnection.ConnectionString = connectionSettings.ConnectionString;
         }
 
         public IDataReader Query(string query, object queryParams)
@@ -41,22 +42,23 @@ namespace Thunderstruck.Provider
 
         public void Commit()
         {
-            if(_transaction != null) _transaction.Commit();
+            if(DbTransaction != null) DbTransaction.Commit();
         }
 
         public void Dispose()
         {
-            _connection.Close();
+            if (DbTransaction != null) DbTransaction.Dispose();
+            if (DbConnection != null) DbConnection.Close();
         }
 
         protected IDbCommand CreateDbCommand(string query, object objectParameters, bool transactional = true)
         {
             Open(transactional);
 
-            var command = _connection.CreateCommand();
+            var command = DbConnection.CreateCommand();
             command.CommandText = query;
-            command.Connection = _connection;
-            command.Transaction = _transaction;
+            command.Connection = DbConnection;
+            command.Transaction = DbTransaction;
 
             if (objectParameters != null)
             {
@@ -68,14 +70,14 @@ namespace Thunderstruck.Provider
 
         private void Open(bool transactional)
         {
-            if (_connection.State == ConnectionState.Closed)
+            if (DbConnection.State == ConnectionState.Closed)
             {
-                _connection.Open();
+                DbConnection.Open();
             }
 
-            if (TransactionMode == Transaction.Begin && transactional && _transaction == null)
+            if (TransactionMode == Transaction.Begin && transactional && DbTransaction == null)
             {
-                _transaction = _connection.BeginTransaction();
+                DbTransaction = DbConnection.BeginTransaction();
             }
         }
     }

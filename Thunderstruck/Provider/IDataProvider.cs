@@ -8,7 +8,11 @@ namespace Thunderstruck.Provider
     {
         void CreateConnection(ConnectionStringSettings settings, Transaction transaction);
 
-        Transaction TransactionMode { get; set; }
+        IDbConnection DbConnection { get; }
+
+        IDbTransaction DbTransaction { get; }
+
+        Transaction TransactionMode { get; }
 
         string ParameterIdentifier { get; }
 

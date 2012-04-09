@@ -15,7 +15,7 @@ namespace Thunderstruck.Runtime
             _dataReader = dataReader;
         }
 
-        public T[] ToObjectArray<T>() where T : new()
+        public IList<T> ToObjectList<T>() where T : new()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace Thunderstruck.Runtime
                     list.Add(item);
                 }
 
-                return list.ToArray();
+                return list;
             }
             finally
             {
@@ -58,7 +58,7 @@ namespace Thunderstruck.Runtime
             }
         }
 
-        public T[] ToArray<T>()
+        public IList<T> ToList<T>()
         {
             try
             {
@@ -67,7 +67,7 @@ namespace Thunderstruck.Runtime
                 {
                     list.Add(CastTo<T>(_dataReader[0]));
                 }
-                return list.ToArray();
+                return list;
             }
             finally
             {
