@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Thunderstruck")]
-[assembly: AssemblyDescription("Thunderstruck is a simple way to access databases with ADO.NET.")]
+[assembly: AssemblyDescription("Thunderstruck is a fast (realy) way to access database with ADO.NET.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Wagner Andrade")]
 [assembly: AssemblyProduct("Thunderstruck")]
-[assembly: AssemblyCopyright("Copyright © Wagner Andrade 2011")]
+[assembly: AssemblyCopyright("Copyright © Wagner Andrade 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
