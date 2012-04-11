@@ -10,7 +10,7 @@ No! Thunderstruck don't is a ORM. It don't abstracts the powerful database, just
 
 ## How?
 
-More info at [Github](http://github.com/wagnerandrade/Thunderstruck).
+More info at [Site](http://wagnerandrade.com/thunderstruck) and [Github](http://github.com/wagnerandrade/Thunderstruck).
 
 ## Licence
 
