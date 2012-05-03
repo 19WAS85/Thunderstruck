@@ -22,7 +22,7 @@ Default connection string.
 
 <pre>
 <connectionStrings>
-	<add name="Default" providerName="" connectionString="" />
+    <add name="Default" providerName="" connectionString="" />
 </connectionStrings>
 </pre>
 
@@ -31,9 +31,9 @@ Default DataContext.
 <pre>
 using (var context = new DataContext())
 {
-	context.Execute("DELETE FROM Cars");
-	context.Execute("DELETE FROM Tools");
-	context.Commit();
+    context.Execute("DELETE FROM Cars");
+    context.Execute("DELETE FROM Tools");
+    context.Commit();
 }
 </pre>
 
@@ -42,8 +42,8 @@ Non transactional DataContext.
 <pre>
 using (var context = new DataContext(Transaction.No))
 {
-	context.Execute("DELETE FROM Cars");
-	context.Execute("DELETE FROM Tools");
+    context.Execute("DELETE FROM Cars");
+    context.Execute("DELETE FROM Tools");
 }
 </pre>
 
@@ -111,7 +111,7 @@ With property.
 <pre>
 public DataObjectCommand<Car> Command
 {
-	get { return new DataObjectCommand<Car>(); }
+    get { return new DataObjectCommand<Car>(); }
 }
 </pre>
 
@@ -172,7 +172,7 @@ With property.
 <pre>
 public DataObjectQuery<Car> Select
 {
-	get { return new DataObjectQuery<Car>(); }
+    get { return new DataObjectQuery<Car>(); }
 }
 </pre>
 
