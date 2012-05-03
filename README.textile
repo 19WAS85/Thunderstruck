@@ -96,6 +96,8 @@ var query = "SELECT * FROM Car WHERE ModelYear > @Year";
 car futureCars = context.All<Car>(query, DateTime.Today);
 </pre>
 
+You can bind a Dictionary<string, object> too.
+
 h3. DataObjectCommand
 
 Creating a object command.
