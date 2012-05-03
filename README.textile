@@ -157,6 +157,16 @@ Creating a object query.
 var select = new DataObjectQuery<Car>();
 </pre>
 
+Or...
+
+<pre>
+var select = new DataObjectQuery<Car>(table: "TB_CARS");
+
+var select = new DataObjectQuery<Car>(primaryKey: "IdCar");
+
+var select = new DataObjectQuery<Car>(table: "TB_CARS", primaryKey: "IdCar");
+</pre>
+
 With property.
 
 <pre>

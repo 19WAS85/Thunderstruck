@@ -14,7 +14,7 @@ namespace Thunderstruck.Test.Cenarios
         public void Execute()
         {
             ProviderResolver.CustomProviderType = typeof(AnotherSqlProvider);
-            var commandManufacturer = new DataObjectCommand<Manufacturer>("Le_Manufacturer");
+            var commandManufacturer = new DataObjectCommand<Manufacturer>(table: "Le_Manufacturer", primaryKey: "TheId");
             var commandCar = new DataObjectCommand<Car>();
             var selectManufacturer = new DataObjectQuery<Manufacturer>("{0} FROM Le_Manufacturer");
             var selectCar = new DataObjectQuery<Car>();

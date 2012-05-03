@@ -81,7 +81,7 @@ namespace Thunderstruck
 
         private string GetCommaFields(DataContext context)
         {
-            var fields = _runtimeObject.GetFields(includePrimaryKey: true);
+            var fields = _runtimeObject.GetFields(removePrimaryKey: null);
             var formatedFields = fields.Select(f => String.Format(context.Provider.FieldFormat, f));
             return String.Join(", ", formatedFields);
         }

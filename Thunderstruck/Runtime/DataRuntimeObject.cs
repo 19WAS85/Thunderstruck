@@ -40,38 +40,39 @@ namespace Thunderstruck.Runtime
             return _validProperties;
         }
 
-        public PropertyInfo GetPrimaryKey()
+        public PropertyInfo GetPrimaryKey(string primaryKeyName)
         {
             if (_primaryKey == null)
             {
                 var validProperties = GetValidProperties();
+                if (primaryKeyName != null) return validProperties.FirstOrDefault(p => p.Name == primaryKeyName);
                 _primaryKey = validProperties.FirstOrDefault(p => p.Name == "Id") ?? validProperties.First();
             }
             
             return _primaryKey;
         }
 
-        public IList<string> GetFields(bool includePrimaryKey)
+        public IList<string> GetFields(string removePrimaryKey)
         {
             var fields = GetValidProperties().ToList();
-            if(!includePrimaryKey) fields.Remove(GetPrimaryKey());
+            if (removePrimaryKey != null) fields.Remove(GetPrimaryKey(removePrimaryKey));
             return fields.Select(p => p.Name).ToList();
         }
 
-        public IList<string> CreateParameters(string paramIdentifier)
+        public IList<string> CreateParameters(string paramIdentifier, string primaryKey)
         {
-            var fields = GetFields(includePrimaryKey: false);
+            var fields = GetFields(removePrimaryKey: primaryKey);
             return fields.Select(f => String.Concat(paramIdentifier, f)).ToList();
         }
 
-        public string CreateCommaParameters(string paramIdentifier)
+        public string CreateCommaParameters(string paramIdentifier, string primaryKey)
         {
-            return Comma(CreateParameters(paramIdentifier));
+            return Comma(CreateParameters(paramIdentifier, primaryKey));
         }
 
-        public string CreateCommaFieldsAndParameters(string paramIdentifier)
+        public string CreateCommaFieldsAndParameters(string paramIdentifier, string primaryKey)
         {
-            var fields = GetFields(includePrimaryKey: false);
+            var fields = GetFields(removePrimaryKey: primaryKey);
             return Comma(fields.Select(f => CreateFieldAndParameter(f, paramIdentifier)));
         }
 
