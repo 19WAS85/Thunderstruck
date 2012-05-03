@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using Thunderstruck.Runtime;
+using System;
 
 namespace Thunderstruck.Provider
 {
@@ -14,6 +15,8 @@ namespace Thunderstruck.Provider
         public Transaction TransactionMode { get; private set; }
 
         public abstract string ParameterIdentifier { get; }
+
+        public abstract string FieldFormat { get; }
 
         public void CreateConnection(ConnectionStringSettings connectionSettings, Transaction transaction)
         {

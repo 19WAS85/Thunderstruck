@@ -27,5 +27,10 @@ namespace Thunderstruck.Provider.Common
 
             return Convert.ToInt32(primarykeyParameter.Value);
         }
+
+        public override string FieldFormat
+        {
+            get { return "\"{0}\""; }
+        }
     }
 }

@@ -58,11 +58,6 @@ namespace Thunderstruck.Runtime
             return fields.Select(p => p.Name).ToList();
         }
 
-        public string GetCommaFields(bool includePrimaryKey)
-        {
-            return Comma(GetFields(includePrimaryKey));
-        }
-
         public IList<string> CreateParameters(string paramIdentifier)
         {
             var fields = GetFields(includePrimaryKey: false);

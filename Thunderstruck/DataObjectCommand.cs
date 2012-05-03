@@ -25,7 +25,7 @@ namespace Thunderstruck
         {
             return ExecuteOnDataContext(dataContext, data =>
             {
-                var fields = _runtimeObject.GetCommaFields(includePrimaryKey: false);
+                var fields = GetCommaFields(data);
                 var parameters = _runtimeObject.CreateCommaParameters(data.Provider.ParameterIdentifier);
                 var command = String.Format(InsertSql, GetTableName(), fields, parameters);
                 var identity = data.ExecuteGetIdentity(command, target);
@@ -77,6 +77,13 @@ namespace Thunderstruck
         private DataContext CreateDataContext()
         {
             return new DataContext(Transaction.No);
+        }
+
+        private string GetCommaFields(DataContext context)
+        {
+            var fields = _runtimeObject.GetFields(includePrimaryKey: false);
+            var formatedFields = fields.Select(f => String.Format(context.Provider.FieldFormat, f));
+            return String.Join(", ", formatedFields);
         }
     }
 }

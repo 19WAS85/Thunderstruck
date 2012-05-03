@@ -15,5 +15,10 @@ namespace Thunderstruck.Provider.Common
             var value = CreateDbCommand(identityQuery, commandParams).ExecuteScalar();
             return Convert.ToInt32(value);
         }
+
+        public override string FieldFormat
+        {
+            get { return "[{0}]"; }
+        }
     }
 }

@@ -37,6 +37,9 @@ namespace Thunderstruck.Runtime
 
         public IList<KeyValuePair<string, object>> CreateValuesList(object target)
         {
+            var dictionary = target as Dictionary<string, object>;
+            if (dictionary != null) return dictionary.Select(i => i).ToList();
+            
             var validProperties = target.GetType().GetProperties();
             return validProperties.Select(p => CreateValue(target, p)).ToList();
         }

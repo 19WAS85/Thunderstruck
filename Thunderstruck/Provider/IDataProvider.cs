@@ -16,6 +16,8 @@ namespace Thunderstruck.Provider
 
         string ParameterIdentifier { get; }
 
+        string FieldFormat { get; }
+
         IDataReader Query(string query, object queryParams);
 
         int Execute(string command, object commandParams);
