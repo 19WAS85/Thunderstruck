@@ -160,11 +160,11 @@ var select = new DataObjectQuery<Car>();
 Or...
 
 <pre>
-var select = new DataObjectQuery<Car>(table: "TB_CARS");
+new DataObjectQuery<Car>(table: "TB_CARS");
 
-var select = new DataObjectQuery<Car>(primaryKey: "IdCar");
+new DataObjectQuery<Car>(primaryKey: "IdCar");
 
-var select = new DataObjectQuery<Car>(table: "TB_CARS", primaryKey: "IdCar");
+new DataObjectQuery<Car>(table: "TB_CARS", primaryKey: "IdCar");
 </pre>
 
 With property.
