@@ -38,7 +38,7 @@ namespace Thunderstruck
 
         public IList<T> All(string where = null, object queryParams = null)
         {
-            var query = String.Format("SELECT {0} {1}", where, ProjectionMask);
+            var query = String.Format("SELECT {0} {1}", ProjectionMask, where);
 
             return Execute(query, queryParams);
         }
