@@ -18,6 +18,10 @@ namespace Thunderstruck.Provider
 
         public abstract string FieldFormat { get; }
 
+        public abstract string SelectAllQuery(string projection, string where);
+
+        public abstract string SelectTakeQuery(string projection, string where, int count);
+
         public void CreateConnection(ConnectionStringSettings connectionSettings, Transaction transaction)
         {
             TransactionMode = transaction;

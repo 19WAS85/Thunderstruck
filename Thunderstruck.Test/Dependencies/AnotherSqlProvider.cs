@@ -25,5 +25,15 @@ namespace Thunderstruck.Test.Dependencies
         {
             get { return "[{0}]"; }
         }
+
+        public override string SelectAllQuery(string projection, string where)
+        {
+            return String.Format("SELECT {0} {1}", projection, where);
+        }
+
+        public override string SelectTakeQuery(string projection, string where, int count)
+        {
+            return String.Format("SELECT TOP {0} {1} {2}", count, projection, where);
+        }
     }
 }

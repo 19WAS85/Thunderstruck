@@ -26,6 +26,10 @@ namespace Thunderstruck.Provider
 
         object ExecuteGetValue(string query, object queryParams);
 
+        string SelectAllQuery(string projection, string where);
+
+        string SelectTakeQuery(string projection, string where, int count);
+
         void Commit();
     }
 }

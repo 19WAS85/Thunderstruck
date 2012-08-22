@@ -24,23 +24,23 @@ namespace Thunderstruck
 
         public DataContext DataContext { get; private set; }
 
-        public T First(string where = null, object queryParams = null)
-        {
-            return Top(1, where, queryParams).FirstOrDefault();
-        }
-
-        public IList<T> Top(int count, string where = null, object queryParams = null)
-        {
-            var query = String.Format("SELECT TOP {0} {1} {2}", count, ProjectionMask, where);
-
-            return Execute(query, queryParams);
-        }
-
         public IList<T> All(string where = null, object queryParams = null)
         {
-            var query = String.Format("SELECT {0} {1}", ProjectionMask, where);
+            var context = GetDataContext();
+            var query = context.Provider.SelectAllQuery(ProjectionMask, where);
+            return Execute(context, query, queryParams);
+        }
 
-            return Execute(query, queryParams);
+        public IList<T> Take(int count, string where = null, object queryParams = null)
+        {
+            var context = GetDataContext();
+            var query = context.Provider.SelectTakeQuery(ProjectionMask, where, count);
+            return Execute(context, query, queryParams);
+        }
+
+        public T First(string where = null, object queryParams = null)
+        {
+            return Take(1, where, queryParams).FirstOrDefault();
         }
 
         public DataObjectQuery<T> With(DataContext dataContext)
@@ -49,20 +49,29 @@ namespace Thunderstruck
             return this;
         }
 
-        private IList<T> Execute(string query, object queryParams = null)
+        private IList<T> Execute(DataContext context, string query, object queryParams = null)
         {
-            var dataContext = DataContext ?? new DataContext(Transaction.No);
-
-            var finalQuery = query.Replace(ProjectionMask, GetProjection(dataContext));
+            var finalQuery = ResolveProjection(query, context);
 
             try
             {
-                return dataContext.All<T>(finalQuery, queryParams);
+                return context.All<T>(finalQuery, queryParams);
             }
             finally
             {
-                if (DataContext == null) dataContext.Dispose();
+                if (DataContext == null) context.Dispose();
             }
+        }
+
+        private Thunderstruck.DataContext GetDataContext()
+        {
+            return DataContext ?? new DataContext(Transaction.No);
+        }
+
+        private string ResolveProjection(string query, DataContext context)
+        {
+            var projection = GetProjection(context);
+            return query.Replace(ProjectionMask, projection);
         }
 
         public string GetProjection(DataContext context)
