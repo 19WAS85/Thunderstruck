@@ -19,6 +19,7 @@ namespace Thunderstruck.Runtime
             {
                 case "System.Data.SqlClient": return new SqlProvider();
                 case "System.Data.OracleClient": return new OracleProvider();
+                case "MySql.Data.MySqlClient": return new MySqlProvider();
                 default: return null;
             }
         }
