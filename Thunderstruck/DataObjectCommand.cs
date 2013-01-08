@@ -46,6 +46,7 @@ namespace Thunderstruck
             }
             return identities;
         }
+		
         public int Update(T target, DataContext dataContext = null)
         {
             return ExecuteOnDataContext(dataContext, data =>
@@ -65,6 +66,7 @@ namespace Thunderstruck
             }
             return identities; 
         }
+		
         public int Delete(T target, DataContext dataContext = null)
         {
             return ExecuteOnDataContext(dataContext, data =>
@@ -73,6 +75,7 @@ namespace Thunderstruck
                 return data.Execute(command, target);
             });
         }
+		
         public IList<int> Delete(IList<T> target, DataContext dataContext = null)
         {
             var identities = new List<int>();
