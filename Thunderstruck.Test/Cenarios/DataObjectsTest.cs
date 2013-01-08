@@ -43,6 +43,31 @@ namespace Thunderstruck.Test.Cenarios
                 })
                 .Should("Have used custom provider to insert").Assert(c => AnotherSqlProvider.ThisWasUsed);
 
+            var carsList = new List<Car>
+            {
+                    new Car{ Name = "Europa S", ModelYear = 2008, Mileage = 600, ManufacturerId = manufacturerId },
+                    new Car{ Name = "Exige", ModelYear = 2005, Mileage = 800, ManufacturerId = manufacturerId }
+            };
+            BeginTest.To(carsList)
+                .Should("Insert a car list with manufacturer id previously created").Assert(c =>
+                {
+                    commandCar.Insert(c);
+                    return selectCar.All().Count == 2;
+                })
+               .Should("Update car list informations on database").Assert(c =>
+               {
+                   c.First().Mileage = 1000;
+                   c.Last().Mileage = 1020;
+                   commandCar.Update(c);
+                   var first = selectCar.First("WHERE Id = @Id", c.First());
+                   var last = selectCar.First("WHERE Id = @Id", c.Last());
+                   return (first.Mileage == 1000 && last.Mileage == 1020);
+               })
+               .Should("Delete car list").Assert(c =>
+               {
+                   commandCar.Delete(c);
+                   return selectCar.All().Count == 0;               
+               });
             BeginTest.To(new Car { Name = "Esprit Turbo", ModelYear = 1981, Mileage = 318, ManufacturerId = manufacturerId })
                 .Should("Insert car with manufacturer id previously created").Assert(c =>
                 {

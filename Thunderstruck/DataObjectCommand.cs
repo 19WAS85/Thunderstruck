@@ -37,6 +37,16 @@ namespace Thunderstruck
             });
         }
 
+        public List<int> Insert(IList<T> targetList, DataContext dataContext = null)
+        {
+            var identities = new List<int>();
+            foreach (T current in targetList) 
+            { 
+                identities.Add(this.Insert(current, dataContext));
+            }
+            return identities;
+        }
+		
         public int Update(T target, DataContext dataContext = null)
         {
             return ExecuteOnDataContext(dataContext, data =>
@@ -47,6 +57,16 @@ namespace Thunderstruck
             });
         }
 
+        public IList<int> Update(IList<T> target, DataContext dataContext = null)
+        {
+            var identities = new List<int>();
+            foreach (var current in target)
+            {
+                identities.Add(this.Update(current));
+            }
+            return identities; 
+        }
+		
         public int Delete(T target, DataContext dataContext = null)
         {
             return ExecuteOnDataContext(dataContext, data =>
@@ -54,6 +74,16 @@ namespace Thunderstruck
                 var command = String.Format(DeleteSql, GetTableName(), _primaryKey.Name, data.Provider.ParameterIdentifier);
                 return data.Execute(command, target);
             });
+        }
+		
+        public IList<int> Delete(IList<T> target, DataContext dataContext = null)
+        {
+            var identities = new List<int>();
+            foreach (var current in target)
+            {
+                identities.Add(this.Delete(current));
+            }
+            return identities;
         }
 
         private int ExecuteOnDataContext(DataContext dataContext, Func<DataContext, int> function)
