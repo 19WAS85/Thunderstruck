@@ -43,7 +43,8 @@ namespace Thunderstruck.Test.Cenarios
                 })
                 .Should("Have used custom provider to insert").Assert(c => AnotherSqlProvider.ThisWasUsed);
 
-            BeginTest.To(new Car { Name = "Esprit Turbo", ModelYear = 1981, Mileage = 318, ManufacturerId = manufacturerId })
+            BeginTest.To(new Car { Name = "Esprit Turbo", ModelYear = 1981, Mileage = 318, Category = CarCategory.Sport, ManufacturerId = manufacturerId })
+                .ThrowExceptions()
                 .Should("Insert car with manufacturer id previously created").Assert(c =>
                 {
                     commandCar.Insert(c);
@@ -57,7 +58,8 @@ namespace Thunderstruck.Test.Cenarios
                         car.ModelYear == 1981 &&
                         car.Mileage == 318 &&
                         car.ManufacturerId == manufacturerId &&
-                        car.Date.Day == DateTime.Today.Day;
+                        car.Date.Day == DateTime.Today.Day &&
+                        car.Category == CarCategory.Sport;
                 })
                 .Should("Update car informations on database").Assert(c =>
                 {

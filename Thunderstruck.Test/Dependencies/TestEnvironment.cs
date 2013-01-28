@@ -36,6 +36,7 @@ namespace Thunderstruck.Test
                 .Append("[Date] DATETIME NOT NULL,")
                 .Append("[Chassis] VARCHAR(32) NOT NULL,")
                 .Append("[Mileage] FLOAT,")
+                .Append("[Category] NUMERIC(1) NOT NULL,")
                 .Append("[ManufacturerId] NUMERIC(8) REFERENCES Le_Manufacturer(TheId))")
                 .ToString();
 

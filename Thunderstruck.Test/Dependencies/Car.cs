@@ -22,6 +22,8 @@ namespace Thunderstruck.Test.Dependencies
 
         public double? Mileage { get; set; }
 
+        public CarCategory Category { get; set; }
+
         public string Chassis
         {
             get { return String.Concat(ManufacturerId, "_", Name).ToUpper(); }

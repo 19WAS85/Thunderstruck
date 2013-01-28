@@ -50,6 +50,7 @@
     <Compile Include="Cenarios\DataObjectsTest.cs" />
     <Compile Include="Dependencies\AnotherSqlProvider.cs" />
     <Compile Include="Dependencies\Car.cs" />
+    <Compile Include="Dependencies\CarCategory.cs" />
     <Compile Include="Dependencies\ErrorCar.cs" />
     <Compile Include="Dependencies\Manufacturer.cs" />
     <Compile Include="Runner.cs" />

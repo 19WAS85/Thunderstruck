@@ -1,14 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Data;
 
 namespace Thunderstruck.Runtime
 {
     public class DataReader
     {
-        private IDataReader _dataReader;
+        private readonly IDataReader _dataReader;
 
         public DataReader(IDataReader dataReader)
         {
@@ -35,12 +34,23 @@ namespace Thunderstruck.Runtime
                         try
                         {
                             var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                            object safeValue = (_dataReader[field] == null || _dataReader[field] is DBNull) ? null : Convert.ChangeType(_dataReader[field], propertyType);
+                            object safeValue = null;
+                            if (property.PropertyType.IsEnum)
+                            {
+                                var enumType = property.PropertyType;
+                                var enumValue = Convert.ToInt32(_dataReader[field].ToString());
+                                safeValue = Enum.ToObject(enumType, enumValue);
+                            }
+                            else
+                            {
+                                var isNull = _dataReader[field] == null || _dataReader[field] is DBNull;
+                                safeValue = (isNull) ? null : Convert.ChangeType(_dataReader[field], propertyType);
+                            }
                             property.SetValue(item, safeValue, null);
                         }
                         catch (FormatException err)
                         {
-                            var message = String.Format("Erro to convert column {0} to property {1} {2}.{3}",
+                            var message = String.Format("Error to convert column {0} to property {1} {2}.{3}",
                                 property.Name, property.PropertyType.Name, typeof(T).Name, property.Name);
 
                             throw new FormatException(message, err);
@@ -85,7 +95,7 @@ namespace Thunderstruck.Runtime
         public static T CastTo<T>(object value)
         {
             if (value is DBNull) return default(T);
-            else return (T) Convert.ChangeType(value, typeof(T));
+            return (T) Convert.ChangeType(value, typeof(T));
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Thunderstruck.Test.Cenarios
                 .Should("Insert car with a transactional datacontext").Assert(d =>
                 {
                     var car = new Car { Name = "Esprit", ModelYear = 1976, ManufacturerId = manufacturerId };
-                    var id = d.Execute("INSERT INTO Car VALUES (@Name, @ModelYear, @Date, @Chassis, @Mileage, @ManufacturerId)", car);
+                    var id = d.Execute("INSERT INTO Car VALUES (@Name, @ModelYear, @Date, @Chassis, @Mileage, @Category, @ManufacturerId)", car);
                     return id > 0;
                 })
                 .Should("Select new car without commit datacontext").Assert(d =>
