@@ -225,7 +225,7 @@ h3. More
 Using a custom provider.
 
 <pre>
-ProviderResolver.CustomProviderType = typeof(MyProvider);
+ProviderResolver.CustomProvider = new MyProvider();
 </pre>
 
 Changing default connection string name.
