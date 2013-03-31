@@ -9,24 +9,34 @@ namespace Thunderstruck.Runtime
 {
     public class ProviderResolver
     {
-        public static Type CustomProviderType { get; set; }
+        private static Dictionary<string, IDataProvider> providerBuffer = new Dictionary<string, IDataProvider>();
 
-        public IDataProvider Create(string providerName)
+        public static IDataProvider CustomProvider { get; set; }
+
+        public static IDataProvider Get(string providerName)
         {
-            if (CustomProviderType != null) return CreateCustomProvider();
+            if (CustomProvider != null) return CustomProvider;
+            if (providerBuffer.ContainsKey(providerName)) return providerBuffer[providerName];
 
-            switch (providerName)
+            IDataProvider provider = CreateProvider(providerName);
+            providerBuffer.Add(providerName, provider);
+
+            return providerBuffer[providerName];
+        }
+
+        private static IDataProvider CreateProvider(string name)
+        {
+            switch (name)
             {
                 case "System.Data.SqlClient": return new SqlProvider();
                 case "System.Data.OracleClient": return new OracleProvider();
                 case "MySql.Data.MySqlClient": return new MySqlProvider();
-                default: return null;
+                default:
+                    var exceptionMessage = String.Concat(
+                        "Thunderstruck do not supports the ", name,
+                        "provider. Try create and set a ProviderResolver.CustomProvider, it is easy.");
+                    throw new ThunderException(exceptionMessage);
             }
-        }
-
-        private IDataProvider CreateCustomProvider()
-        {
-            return Activator.CreateInstance(CustomProviderType) as IDataProvider;
         }
     }
 }

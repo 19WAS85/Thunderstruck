@@ -40,7 +40,7 @@ namespace Thunderstruck
             var connectionName = connectionStringName ?? DefaultConnectionStringName;
             var connectionSettings = ConnectionStringBuffer.Instance.Get(connectionName);
 
-            Provider = new ProviderResolver().Create(connectionSettings.ProviderName);
+            Provider = ProviderResolver.Get(connectionSettings.ProviderName);
             Provider.CreateConnection(connectionSettings, transaction);
         }
 
