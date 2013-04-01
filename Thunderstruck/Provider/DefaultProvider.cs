@@ -8,11 +8,11 @@ namespace Thunderstruck.Provider
 {
     public abstract class DefaultProvider : IDataProvider
     {
-        public IDbConnection DbConnection { get; private set; }
+        public IDbConnection DbConnection { get; set; }
 
-        public IDbTransaction DbTransaction { get; private set; }
-        
-        public Transaction TransactionMode { get; private set; }
+        public IDbTransaction DbTransaction { get; set; }
+
+        public Transaction TransactionMode { get; set; }
 
         public abstract string ParameterIdentifier { get; }
 
@@ -42,7 +42,7 @@ namespace Thunderstruck.Provider
 
         public object ExecuteGetValue(string query, object queryParams)
         {
-            return CreateDbCommand(query, queryParams).ExecuteScalar();
+            return CreateDbCommand(query, queryParams, transactional: false).ExecuteScalar();
         }
 
         public abstract int ExecuteGetIdentity(string command, object commandParams);

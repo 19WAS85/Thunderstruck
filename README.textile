@@ -22,7 +22,7 @@ Default connection string.
 
 <pre>
 <connectionStrings>
-    <add name="Default" providerName="" connectionString="" />
+    <add name="Default" providerName="..." connectionString="..." />
 </connectionStrings>
 </pre>
 
@@ -225,7 +225,7 @@ h3. More
 Using a custom provider.
 
 <pre>
-ProviderResolver.CustomProvider = new MyProvider();
+ProviderFactory.CustomProvider = (providerName) => new MyProvider();
 </pre>
 
 Changing default connection string name.

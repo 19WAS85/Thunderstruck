@@ -38,21 +38,26 @@ namespace Thunderstruck
             TransactionMode = transaction;
 
             var connectionName = connectionStringName ?? DefaultConnectionStringName;
-            var connectionSettings = ConnectionStringBuffer.Instance.Get(connectionName);
+            ConnectionSettings = ConnectionStringBuffer.Instance.Get(connectionName);
 
-            Provider = ProviderResolver.Get(connectionSettings.ProviderName);
-            Provider.CreateConnection(connectionSettings, transaction);
+            var providerFactory = new ProviderFactory();
+            Provider = providerFactory.Create(ConnectionSettings, transaction);
         }
 
         /// <summary>
         /// Thunderstruck data provider.
         /// </summary>
-        public IDataProvider Provider { get; set; }
+        public IDataProvider Provider { get; private set; }
 
         /// <summary>
         /// Defines the name of default connection string on application config.
         /// </summary>
         public static string DefaultConnectionStringName { get; set; }
+
+        /// <summary>
+        /// Connection settings of application config.
+        /// </summary>
+        public ConnectionStringSettings ConnectionSettings { get; private set; }
 
         /// <summary>
         /// Defines the transaction mode of data context.

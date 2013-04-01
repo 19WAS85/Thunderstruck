@@ -57,7 +57,7 @@
     <Compile Include="Runtime\ParametersBinder.cs" />
     <Compile Include="Runtime\DataRuntimeObject.cs" />
     <Compile Include="Runtime\DataReader.cs" />
-    <Compile Include="Runtime\ProviderResolver.cs" />
+    <Compile Include="Provider\ProviderFactory.cs" />
     <Compile Include="ThunderException.cs" />
   </ItemGroup>
   <ItemGroup />

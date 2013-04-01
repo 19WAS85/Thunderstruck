@@ -42,7 +42,15 @@ namespace Thunderstruck.Runtime
 
         private ConnectionStringSettings GetFromConfig(string connectionName)
         {
-            return ConfigurationManager.ConnectionStrings[connectionName];
+            var setting = ConfigurationManager.ConnectionStrings[connectionName];
+
+            if (setting == null)
+            {
+                var exceptionMessage = String.Concat("ConnectionString '", connectionName ,"' not found in config file.");
+                throw new ThunderException(exceptionMessage);
+            }
+
+            return setting;
         }
     }
 }
