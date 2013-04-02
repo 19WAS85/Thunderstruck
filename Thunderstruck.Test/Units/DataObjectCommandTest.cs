@@ -11,14 +11,15 @@ namespace Thunderstruck.Test.Units
     [TestClass]
     public class DataObjectCommandTest
     {
-        private DataObjectCommand<Car> command;
         private Car target;
-
         private Mock<IDbConnection> connectionMock;
         private Mock<IDbCommand> commandMock;
         private Mock<IDbTransaction> transactionMock;
         private Mock<IDbDataParameter> parameterMock;
         private Mock<IDataParameterCollection> parameterCollectionMock;
+        private DataObjectCommand<Car> command;
+        private DataObjectCommand<AnotherCarClass> anotherCommand;
+        private AnotherCarClass anotherTarget;
 
         [TestInitialize]
         public void Initialize()
@@ -38,7 +39,9 @@ namespace Thunderstruck.Test.Units
             commandMock.Setup(c => c.CommandText).Returns(String.Empty);
 
             target = new Car { Name = "Esprit Turbo", ModelYear = 1981 };
+            anotherTarget = new AnotherCarClass { Name = "Esprit Turbo", ModelYear = 1981 };
             command = new DataObjectCommand<Car>();
+            anotherCommand = new DataObjectCommand<AnotherCarClass>(table: "CarsTable", primaryKey: "CarCode");
         }
 
         [TestMethod]
@@ -63,6 +66,8 @@ namespace Thunderstruck.Test.Units
         public void DataObjectCommand_Should_Insert_A_New_Object_And_Binds_Primary_Key_Property()
         {
             commandMock.Setup(c => c.ExecuteScalar()).Returns(318);
+
+            target.Id.Should().Be(0);
 
             command.Insert(target);
 
@@ -129,6 +134,40 @@ namespace Thunderstruck.Test.Units
             transactionMock.Verify(t => t.Commit(), Times.Never());
         }
 
+        [TestMethod]
+        public void DataObjectCommand_Should_Provides_Table_Name_And_Primary_Key_Configuration_To_Insert()
+        {
+            commandMock.Setup(c => c.CommandText).Returns(String.Empty);
+            commandMock.Setup(c => c.ExecuteScalar()).Returns(318);
+
+            anotherTarget.CarCode.Should().Be(0);
+
+            anotherCommand.Insert(anotherTarget);
+
+            anotherTarget.CarCode.Should().Be(318);
+            commandMock.VerifySet(c => c.CommandText = "INSERT INTO CarsTable ([Name], [ModelYear]) VALUES (@Name, @ModelYear); SELECT SCOPE_IDENTITY()");
+        }
+
+        [TestMethod]
+        public void DataObjectCommand_Should_Provides_Table_Name_And_Primary_Key_Configuration_To_Update()
+        {
+            commandMock.Setup(c => c.CommandText).Returns(String.Empty);
+
+            anotherCommand.Update(anotherTarget);
+            
+            commandMock.VerifySet(c => c.CommandText = "UPDATE CarsTable SET Name = @Name, ModelYear = @ModelYear WHERE CarCode = @CarCode");
+        }
+
+        [TestMethod]
+        public void DataObjectCommand_Should_Provides_Table_Name_And_Primary_Key_Configuration_To_Delete()
+        {
+            commandMock.Setup(c => c.CommandText).Returns(String.Empty);
+
+            anotherCommand.Delete(anotherTarget);
+            
+            commandMock.VerifySet(c => c.CommandText = "DELETE FROM CarsTable Where CarCode = @CarCode");
+        }
+
         [TestCleanup]
         public void CleanUp()
         {
@@ -140,6 +179,15 @@ namespace Thunderstruck.Test.Units
     class Car
     {
         public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public int ModelYear { get; set; }
+    }
+
+    class AnotherCarClass
+    {
+        public int CarCode { get; set; }
 
         public string Name { get; set; }
 

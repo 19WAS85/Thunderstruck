@@ -66,6 +66,7 @@
     <Compile Include="Units\DataContextTest.cs" />
     <Compile Include="Units\ProviderFactoryTest.cs" />
     <Compile Include="Units\DataObjectCommandTest.cs" />
+    <Compile Include="Units\DataObjectQueryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
