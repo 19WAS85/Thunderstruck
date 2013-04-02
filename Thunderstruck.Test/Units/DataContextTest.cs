@@ -38,7 +38,7 @@ namespace Thunderstruck.Test.Units
             parameterMock = new Mock<IDbDataParameter>();
             parameterCollectionMock = new Mock<IDataParameterCollection>();
             commandMock.Setup(c => c.CreateParameter()).Returns(parameterMock.Object);
-            commandMock.Setup(c => c.CommandText).Returns("INSERT INTO Car VALUES (@Name, @ModelYear)");
+            commandMock.Setup(c => c.CommandText).Returns("INSERT INTO Airplane VALUES (@Name, @FirstFlight)");
             commandMock.Setup(c => c.Parameters).Returns(parameterCollectionMock.Object);
         }
 
@@ -47,7 +47,7 @@ namespace Thunderstruck.Test.Units
         {
             using (var context = new DataContext())
             {
-                context.Execute("DELETE FROM Cars");
+                context.Execute("DELETE FROM Airplane");
                 context.Commit();
             }
 
@@ -56,7 +56,7 @@ namespace Thunderstruck.Test.Units
             connectionMock.Verify(c => c.BeginTransaction(), Times.Once());
             connectionMock.Verify(c => c.Close(), Times.Once());
             commandMock.Verify(c => c.ExecuteNonQuery(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "DELETE FROM Cars");
+            commandMock.VerifySet(c => c.CommandText = "DELETE FROM Airplane");
             commandMock.VerifySet(c => c.Connection = connectionMock.Object);
             commandMock.VerifySet(c => c.Transaction = transactionMock.Object);
             commandMock.Verify(c => c.CreateParameter(), Times.Never());
@@ -69,7 +69,7 @@ namespace Thunderstruck.Test.Units
         {
             using (var context = new DataContext())
             {
-                context.Execute("DELETE FROM Cars");
+                context.Execute("DELETE FROM Airplane");
 
                 // Simulate connection open state later the first execute.
                 connectionMock.Setup(c => c.State).Returns(ConnectionState.Open);
@@ -83,7 +83,7 @@ namespace Thunderstruck.Test.Units
             connectionMock.Verify(c => c.BeginTransaction(), Times.Once());
             connectionMock.Verify(c => c.Close(), Times.Once());
             commandMock.Verify(c => c.ExecuteNonQuery(), Times.Exactly(2));
-            commandMock.VerifySet(c => c.CommandText = "DELETE FROM Cars");
+            commandMock.VerifySet(c => c.CommandText = "DELETE FROM Airplane");
             commandMock.VerifySet(c => c.CommandText = "DELETE FROM Tools");
             commandMock.VerifySet(c => c.Connection = connectionMock.Object);
             commandMock.VerifySet(c => c.Transaction = transactionMock.Object);
@@ -97,7 +97,7 @@ namespace Thunderstruck.Test.Units
         {
             using (var context = new DataContext(Transaction.No))
             {
-                context.Execute("DELETE FROM Cars");
+                context.Execute("DELETE FROM Airplane");
 
                 // Simulate connection open state later the first execute.
                 connectionMock.Setup(c => c.State).Returns(ConnectionState.Open);
@@ -110,7 +110,7 @@ namespace Thunderstruck.Test.Units
             connectionMock.Verify(c => c.BeginTransaction(), Times.Never());
             connectionMock.Verify(c => c.Close(), Times.Once());
             commandMock.Verify(c => c.ExecuteNonQuery(), Times.Exactly(2));
-            commandMock.VerifySet(c => c.CommandText = "DELETE FROM Cars");
+            commandMock.VerifySet(c => c.CommandText = "DELETE FROM Airplane");
             commandMock.VerifySet(c => c.CommandText = "DELETE FROM Tools");
             commandMock.VerifySet(c => c.Connection = connectionMock.Object);
             commandMock.VerifySet(c => c.Transaction = transactionMock.Object, Times.Never());
@@ -150,14 +150,14 @@ namespace Thunderstruck.Test.Units
         {
             using (var context = new DataContext())
             {
-                var value = context.GetValue("SELECT COUNT(Id) FROM Cars");
+                var value = context.GetValue("SELECT COUNT(Id) FROM Airplane");
             }
 
             connectionMock.Verify(c => c.Open(), Times.Once());
             connectionMock.Verify(c => c.Close(), Times.Once());
             connectionMock.Verify(c => c.BeginTransaction(), Times.Never());
             commandMock.Verify(c => c.ExecuteScalar(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "SELECT COUNT(Id) FROM Cars");
+            commandMock.VerifySet(c => c.CommandText = "SELECT COUNT(Id) FROM Airplane");
             providerMock.Object.DbTransaction.Should().BeNull();
         }
 
@@ -168,7 +168,7 @@ namespace Thunderstruck.Test.Units
 
             using (var context = new DataContext())
             {
-                var value = context.GetValue<int>("SELECT COUNT(Id) FROM Cars");
+                var value = context.GetValue<int>("SELECT COUNT(Id) FROM Airplane");
             }
 
             commandMock.Verify(c => c.ExecuteScalar(), Times.Once());
@@ -196,14 +196,14 @@ namespace Thunderstruck.Test.Units
         {
             using (var context = new DataContext())
             {
-                var cars = context.All<object>("SELECT * FROM Cars");
+                var cars = context.All<object>("SELECT * FROM Airplane");
             }
 
             connectionMock.Verify(c => c.Open(), Times.Once());
             connectionMock.Verify(c => c.Close(), Times.Once());
             connectionMock.Verify(c => c.BeginTransaction(), Times.Never());
             commandMock.Verify(c => c.ExecuteReader(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "SELECT * FROM Cars");
+            commandMock.VerifySet(c => c.CommandText = "SELECT * FROM Airplane");
             providerMock.Object.DbTransaction.Should().BeNull();
             dataReaderMock.Verify(r => r.Read(), Times.Once());
         }
@@ -213,16 +213,16 @@ namespace Thunderstruck.Test.Units
         {
             using (var context = new DataContext())
             {
-                var car = new { Name = "Esprit Turbo", ModelYear = (int?) null };
-                var command = "INSERT INTO Car VALUES (@Name, @ModelYear)";
+                var car = new { Name = "Fokker Dr.I", FirstFlight = (int?) null };
+                var command = "INSERT INTO Airplane VALUES (@Name, @FirstFlight)";
                 context.Execute(command, car);
             }
 
             commandMock.Verify(c => c.ExecuteNonQuery(), Times.Once());
             commandMock.Verify(c => c.CreateParameter(), Times.Exactly(2));
             parameterMock.VerifySet(p => p.ParameterName = "Name");
-            parameterMock.VerifySet(p => p.ParameterName = "ModelYear");
-            parameterMock.VerifySet(p => p.Value = "Esprit Turbo");
+            parameterMock.VerifySet(p => p.ParameterName = "FirstFlight");
+            parameterMock.VerifySet(p => p.Value = "Fokker Dr.I");
             parameterMock.VerifySet(p => p.Value = DBNull.Value);
             parameterCollectionMock.Verify(p => p.Add(parameterMock.Object), Times.Exactly(2));
         }

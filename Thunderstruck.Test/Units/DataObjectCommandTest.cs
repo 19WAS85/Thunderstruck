@@ -11,15 +11,15 @@ namespace Thunderstruck.Test.Units
     [TestClass]
     public class DataObjectCommandTest
     {
-        private Car target;
+        private Airplane target;
         private Mock<IDbConnection> connectionMock;
         private Mock<IDbCommand> commandMock;
         private Mock<IDbTransaction> transactionMock;
         private Mock<IDbDataParameter> parameterMock;
         private Mock<IDataParameterCollection> parameterCollectionMock;
-        private DataObjectCommand<Car> command;
-        private DataObjectCommand<AnotherCarClass> anotherCommand;
-        private AnotherCarClass anotherTarget;
+        private DataObjectCommand<Airplane> command;
+        private DataObjectCommand<AnotherAirplaneClass> anotherCommand;
+        private AnotherAirplaneClass anotherTarget;
 
         [TestInitialize]
         public void Initialize()
@@ -38,16 +38,16 @@ namespace Thunderstruck.Test.Units
             commandMock.Setup(c => c.Parameters).Returns(parameterCollectionMock.Object);
             commandMock.Setup(c => c.CommandText).Returns(String.Empty);
 
-            target = new Car { Name = "Esprit Turbo", ModelYear = 1981 };
-            anotherTarget = new AnotherCarClass { Name = "Esprit Turbo", ModelYear = 1981 };
-            command = new DataObjectCommand<Car>();
-            anotherCommand = new DataObjectCommand<AnotherCarClass>(table: "CarsTable", primaryKey: "CarCode");
+            target = new Airplane { Name = "Fokker Dr.I", FirstFlight = 1917 };
+            anotherTarget = new AnotherAirplaneClass { Name = "Fokker Dr.I", FirstFlight = 1917 };
+            command = new DataObjectCommand<Airplane>();
+            anotherCommand = new DataObjectCommand<AnotherAirplaneClass>(table: "AirplanesTable", primaryKey: "AirplaneCode");
         }
 
         [TestMethod]
         public void DataObjectCommand_Should_Insert_A_New_Object_In_Database()
         {
-            commandMock.Setup(c => c.CommandText).Returns("INSERT INTO Car ([Name], [ModelYear]) VALUES (@Name, @ModelYear); SELECT SCOPE_IDENTITY()");
+            commandMock.Setup(c => c.CommandText).Returns("INSERT INTO Airplane ([Name], [FirstFlight]) VALUES (@Name, @FirstFlight); SELECT SCOPE_IDENTITY()");
 
             command.Insert(target);
 
@@ -56,7 +56,7 @@ namespace Thunderstruck.Test.Units
             connectionMock.Verify(c => c.BeginTransaction(), Times.Never());
             connectionMock.Verify(c => c.Close(), Times.Once());
             commandMock.Verify(c => c.ExecuteScalar(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "INSERT INTO Car ([Name], [ModelYear]) VALUES (@Name, @ModelYear); SELECT SCOPE_IDENTITY()");
+            commandMock.VerifySet(c => c.CommandText = "INSERT INTO Airplane ([Name], [FirstFlight]) VALUES (@Name, @FirstFlight); SELECT SCOPE_IDENTITY()");
             commandMock.VerifySet(c => c.Connection = connectionMock.Object);
             commandMock.Verify(c => c.CreateParameter(), Times.Exactly(2));
             transactionMock.Verify(t => t.Commit(), Times.Never());
@@ -101,7 +101,7 @@ namespace Thunderstruck.Test.Units
         [TestMethod]
         public void DataObjectCommand_Should_Update_A_Item_On_Database()
         {
-            commandMock.Setup(c => c.CommandText).Returns("UPDATE Car SET Name = @Name, ModelYear = @ModelYear WHERE Id = @Id");
+            commandMock.Setup(c => c.CommandText).Returns("UPDATE Airplane SET Name = @Name, FirstFlight = @FirstFlight WHERE Id = @Id");
             
             command.Update(target);
 
@@ -110,7 +110,7 @@ namespace Thunderstruck.Test.Units
             connectionMock.Verify(c => c.BeginTransaction(), Times.Never());
             connectionMock.Verify(c => c.Close(), Times.Once());
             commandMock.Verify(c => c.ExecuteNonQuery(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "UPDATE Car SET Name = @Name, ModelYear = @ModelYear WHERE Id = @Id");
+            commandMock.VerifySet(c => c.CommandText = "UPDATE Airplane SET Name = @Name, FirstFlight = @FirstFlight WHERE Id = @Id");
             commandMock.VerifySet(c => c.Connection = connectionMock.Object);
             commandMock.Verify(c => c.CreateParameter(), Times.Exactly(3));
             transactionMock.Verify(t => t.Commit(), Times.Never());
@@ -119,7 +119,7 @@ namespace Thunderstruck.Test.Units
         [TestMethod]
         public void DataObjectCommand_Should_Delete_A_Item_On_Database()
         {
-            commandMock.Setup(c => c.CommandText).Returns("DELETE FROM Car Where Id = @Id");
+            commandMock.Setup(c => c.CommandText).Returns("DELETE FROM Airplane Where Id = @Id");
 
             command.Delete(target);
 
@@ -128,7 +128,7 @@ namespace Thunderstruck.Test.Units
             connectionMock.Verify(c => c.BeginTransaction(), Times.Never());
             connectionMock.Verify(c => c.Close(), Times.Once());
             commandMock.Verify(c => c.ExecuteNonQuery(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "DELETE FROM Car Where Id = @Id");
+            commandMock.VerifySet(c => c.CommandText = "DELETE FROM Airplane Where Id = @Id");
             commandMock.VerifySet(c => c.Connection = connectionMock.Object);
             commandMock.Verify(c => c.CreateParameter(), Times.Exactly(1));
             transactionMock.Verify(t => t.Commit(), Times.Never());
@@ -140,12 +140,12 @@ namespace Thunderstruck.Test.Units
             commandMock.Setup(c => c.CommandText).Returns(String.Empty);
             commandMock.Setup(c => c.ExecuteScalar()).Returns(318);
 
-            anotherTarget.CarCode.Should().Be(0);
+            anotherTarget.AirplaneCode.Should().Be(0);
 
             anotherCommand.Insert(anotherTarget);
 
-            anotherTarget.CarCode.Should().Be(318);
-            commandMock.VerifySet(c => c.CommandText = "INSERT INTO CarsTable ([Name], [ModelYear]) VALUES (@Name, @ModelYear); SELECT SCOPE_IDENTITY()");
+            anotherTarget.AirplaneCode.Should().Be(318);
+            commandMock.VerifySet(c => c.CommandText = "INSERT INTO AirplanesTable ([Name], [FirstFlight]) VALUES (@Name, @FirstFlight); SELECT SCOPE_IDENTITY()");
         }
 
         [TestMethod]
@@ -155,7 +155,7 @@ namespace Thunderstruck.Test.Units
 
             anotherCommand.Update(anotherTarget);
             
-            commandMock.VerifySet(c => c.CommandText = "UPDATE CarsTable SET Name = @Name, ModelYear = @ModelYear WHERE CarCode = @CarCode");
+            commandMock.VerifySet(c => c.CommandText = "UPDATE AirplanesTable SET Name = @Name, FirstFlight = @FirstFlight WHERE AirplaneCode = @AirplaneCode");
         }
 
         [TestMethod]
@@ -165,7 +165,7 @@ namespace Thunderstruck.Test.Units
 
             anotherCommand.Delete(anotherTarget);
             
-            commandMock.VerifySet(c => c.CommandText = "DELETE FROM CarsTable Where CarCode = @CarCode");
+            commandMock.VerifySet(c => c.CommandText = "DELETE FROM AirplanesTable Where AirplaneCode = @AirplaneCode");
         }
 
         [TestCleanup]
@@ -176,21 +176,21 @@ namespace Thunderstruck.Test.Units
         }
     }
 
-    class Car
+    class Airplane
     {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
-        public int ModelYear { get; set; }
+        public int FirstFlight { get; set; }
     }
 
-    class AnotherCarClass
+    class AnotherAirplaneClass
     {
-        public int CarCode { get; set; }
+        public int AirplaneCode { get; set; }
 
         public string Name { get; set; }
 
-        public int ModelYear { get; set; }
+        public int FirstFlight { get; set; }
     }
 }

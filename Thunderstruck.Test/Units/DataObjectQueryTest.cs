@@ -16,8 +16,8 @@ namespace Thunderstruck.Test.Units
         private Mock<IDataReader> dataReaderMock;
         private Mock<IDbDataParameter> parameterMock;
         private Mock<IDataParameterCollection> parameterCollectionMock;
-        private DataObjectQuery<Car> select;
-        private DataObjectQuery<AnotherCarClass> anotherSelect;
+        private DataObjectQuery<Airplane> select;
+        private DataObjectQuery<AnotherAirplaneClass> anotherSelect;
 
         [TestInitialize]
         public void Initialize()
@@ -38,8 +38,8 @@ namespace Thunderstruck.Test.Units
             commandMock.Setup(c => c.CreateParameter()).Returns(parameterMock.Object);
             commandMock.Setup(c => c.Parameters).Returns(parameterCollectionMock.Object);
 
-            select = new DataObjectQuery<Car>();
-            anotherSelect = new DataObjectQuery<AnotherCarClass>("{0} FROM CarsTable");
+            select = new DataObjectQuery<Airplane>();
+            anotherSelect = new DataObjectQuery<AnotherAirplaneClass>("{0} FROM AirplanesTable");
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace Thunderstruck.Test.Units
             connectionMock.Verify(c => c.BeginTransaction(), Times.Never());
             connectionMock.Verify(c => c.Close(), Times.Once());
             commandMock.Verify(c => c.ExecuteReader(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "SELECT [Id], [Name], [ModelYear] FROM Car");
+            commandMock.VerifySet(c => c.CommandText = "SELECT [Id], [Name], [FirstFlight] FROM Airplane");
             commandMock.VerifySet(c => c.Connection = connectionMock.Object);
             commandMock.VerifySet(c => c.Transaction = transactionMock.Object, Times.Never());
             commandMock.Verify(c => c.CreateParameter(), Times.Never());
@@ -62,12 +62,12 @@ namespace Thunderstruck.Test.Units
         [TestMethod]
         public void DataObjectQuery_Should_Select_All_Items_From_Database_With_Parameter_Binding_And_Context_Transaction()
         {
-            commandMock.Setup(c => c.CommandText).Returns("SELECT [Id], [Name], [ModelYear] FROM Car WHERE Name = @Name");
+            commandMock.Setup(c => c.CommandText).Returns("SELECT [Id], [Name], [FirstFlight] FROM Airplane WHERE Name = @Name");
 
             using (var context = new DataContext())
             {
                 // Execute a command to open transaction.
-                context.Execute("DELETE FROM Cars");
+                context.Execute("DELETE FROM Airplane");
 
                 // Simulate connection open state later the first execute.
                 connectionMock.Setup(c => c.State).Returns(ConnectionState.Open);
@@ -82,7 +82,7 @@ namespace Thunderstruck.Test.Units
             connectionMock.Verify(c => c.BeginTransaction(), Times.Once());
             connectionMock.Verify(c => c.Close(), Times.Once());
             commandMock.Verify(c => c.ExecuteReader(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "SELECT [Id], [Name], [ModelYear] FROM Car WHERE Name = @Name");
+            commandMock.VerifySet(c => c.CommandText = "SELECT [Id], [Name], [FirstFlight] FROM Airplane WHERE Name = @Name");
             commandMock.VerifySet(c => c.Connection = connectionMock.Object);
             commandMock.VerifySet(c => c.Transaction = transactionMock.Object);
             commandMock.Verify(c => c.CreateParameter(), Times.Once());
@@ -95,10 +95,10 @@ namespace Thunderstruck.Test.Units
         [TestMethod]
         public void DataObjectQuery_Should_Select_Limited_Items_From_Database()
         {
-            select.Take(13, "ORDER BY ModelYear DESC");
+            select.Take(13, "ORDER BY Year DESC");
 
             commandMock.Verify(c => c.ExecuteReader(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "SELECT TOP 13 [Id], [Name], [ModelYear] FROM Car ORDER BY ModelYear DESC");
+            commandMock.VerifySet(c => c.CommandText = "SELECT TOP 13 [Id], [Name], [FirstFlight] FROM Airplane ORDER BY Year DESC");
         }
 
         [TestMethod]
@@ -107,7 +107,7 @@ namespace Thunderstruck.Test.Units
             select.First();
 
             commandMock.Verify(c => c.ExecuteReader(), Times.Once());
-            commandMock.VerifySet(c => c.CommandText = "SELECT TOP 1 [Id], [Name], [ModelYear] FROM Car");
+            commandMock.VerifySet(c => c.CommandText = "SELECT TOP 1 [Id], [Name], [FirstFlight] FROM Airplane");
         }
 
         [TestMethod]
@@ -115,7 +115,7 @@ namespace Thunderstruck.Test.Units
         {
             anotherSelect.All();
 
-            commandMock.VerifySet(c => c.CommandText = "SELECT [CarCode], [Name], [ModelYear] FROM CarsTable");
+            commandMock.VerifySet(c => c.CommandText = "SELECT [AirplaneCode], [Name], [FirstFlight] FROM AirplanesTable");
         }
     }
 }
