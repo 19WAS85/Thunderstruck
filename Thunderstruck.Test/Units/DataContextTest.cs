@@ -16,6 +16,8 @@ namespace Thunderstruck.Test.Units
         private Mock<IDbTransaction> transactionMock;
         private Mock<DefaultProvider> providerMock;
         private Mock<IDataReader> dataReaderMock;
+        private Mock<IDbDataParameter> parameterMock;
+        private Mock<IDataParameterCollection> parameterCollectionMock;
 
         [TestInitialize]
         public void Initialize()
@@ -32,6 +34,12 @@ namespace Thunderstruck.Test.Units
 
             dataReaderMock = new Mock<IDataReader>();
             commandMock.Setup(c => c.ExecuteReader()).Returns(dataReaderMock.Object);
+
+            parameterMock = new Mock<IDbDataParameter>();
+            parameterCollectionMock = new Mock<IDataParameterCollection>();
+            commandMock.Setup(c => c.CreateParameter()).Returns(parameterMock.Object);
+            commandMock.Setup(c => c.CommandText).Returns("INSERT INTO Car VALUES (@Name, @ModelYear)");
+            commandMock.Setup(c => c.Parameters).Returns(parameterCollectionMock.Object);
         }
 
         [TestMethod]
@@ -198,6 +206,25 @@ namespace Thunderstruck.Test.Units
             commandMock.VerifySet(c => c.CommandText = "SELECT * FROM Cars");
             providerMock.Object.DbTransaction.Should().BeNull();
             dataReaderMock.Verify(r => r.Read(), Times.Once());
+        }
+
+        [TestMethod]
+        public void DataContext_Should_Execute_Command_With_Parameters()
+        {
+            using (var context = new DataContext())
+            {
+                var car = new { Name = "Esprit Turbo", ModelYear = (int?) null };
+                var command = "INSERT INTO Car VALUES (@Name, @ModelYear)";
+                context.Execute(command, car);
+            }
+
+            commandMock.Verify(c => c.ExecuteNonQuery(), Times.Once());
+            commandMock.Verify(c => c.CreateParameter(), Times.Exactly(2));
+            parameterMock.VerifySet(p => p.ParameterName = "Name");
+            parameterMock.VerifySet(p => p.ParameterName = "ModelYear");
+            parameterMock.VerifySet(p => p.Value = "Esprit Turbo");
+            parameterMock.VerifySet(p => p.Value = DBNull.Value);
+            parameterCollectionMock.Verify(p => p.Add(parameterMock.Object), Times.Exactly(2));
         }
 
         [TestCleanup]
