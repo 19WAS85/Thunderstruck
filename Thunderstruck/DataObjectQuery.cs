@@ -27,14 +27,14 @@ namespace Thunderstruck
         public IList<T> All(string where = null, object queryParams = null)
         {
             var context = GetDataContext();
-            var query = context.Provider.SelectAllQuery(ProjectionMask, where);
+            var query = context.Provider.SelectAllQuery(ProjectionMask, where).Trim();
             return Execute(context, query, queryParams);
         }
 
         public IList<T> Take(int count, string where = null, object queryParams = null)
         {
             var context = GetDataContext();
-            var query = context.Provider.SelectTakeQuery(ProjectionMask, where, count);
+            var query = context.Provider.SelectTakeQuery(ProjectionMask, where, count).Trim();
             return Execute(context, query, queryParams);
         }
 
