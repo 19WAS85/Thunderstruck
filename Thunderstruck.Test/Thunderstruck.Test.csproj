@@ -62,7 +62,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Functional\SqlDataContextTest.cs" />
+    <Compile Include="Functional\SqlTest.cs" />
     <Compile Include="Functional\SqlEnvironment.cs" />
     <Compile Include="Models\Car.cs" />
     <Compile Include="Models\CarCategory.cs" />

@@ -9,9 +9,11 @@ using Thunderstruck.Provider;
 namespace Thunderstruck.Test.Functional
 {
     [TestClass]
-    public class SqlDataContextTest
+    public class SqlTest
     {
         private static SqlEnvironment environment;
+        private DataObject<Car> carDataObject;
+        private DataObject<Manufacturer> manufacturerDataObject;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext tests)
@@ -22,6 +24,9 @@ namespace Thunderstruck.Test.Functional
         [TestInitialize]
         public void Initialize()
         {
+            carDataObject = new DataObject<Car>();
+            manufacturerDataObject = new DataObject<Manufacturer>(table: "Le_Manufacturer", primaryKey: "TheId");
+
             ProviderFactory.CustomProvider = null;
             ProviderFactory.ConnectionFactory = null;
         }
@@ -211,6 +216,104 @@ namespace Thunderstruck.Test.Functional
 
                 context.Execute("INSERT INTO Car VALUES (@Name, @ModelYear, @CreatedAt, @Chassis, @Mileage, @Category, @ManufacturerId)", insertParameters);
             }
+        }
+
+        [TestMethod]
+        public void DataObject_Should_Insert_Item_From_Database_And_Set_Primery_Key()
+        {
+            var car = new Car { Name = "Aventador", ModelYear = 2011, Category = CarCategory.Sport };
+            carDataObject.Insert(car);
+
+            car.Id.Should().BeGreaterThan(0);
+
+            using (var context = new DataContext())
+            {
+                var query = "SELECT TOP 1 * FROM Car WHERE Name = 'Aventador'";
+                var createdManufacturer = context.First<Car>(query);
+
+                createdManufacturer.Should().NotBeNull();
+            }
+        }
+
+        [TestMethod]
+        public void DataObject_Should_Read_Item_From_Database()
+        {
+            var car = carDataObject.Select.First("WHERE Name = 'Aventador'");
+
+            car.Name.Should().Be("Aventador");
+            car.ModelYear.Should().Be(2011);
+        }
+
+        [TestMethod]
+        public void DataObject_Should_Create_Item_From_Database_With_Custom_Table_Name_And_Primary_Key()
+        {
+            var manufacturer = new Manufacturer { Name = "Lamborghini", BuildYear = 1963 };
+            manufacturerDataObject.Insert(manufacturer);
+            var queryParams = new { Name = "Lamborghini" };
+            var createdManufacturer = manufacturerDataObject.Select.First("WHERE Name = @Name", queryParams);
+
+            manufacturer.TheId.Should().BeGreaterThan(0);
+            createdManufacturer.Name.Should().Be("Lamborghini");
+            createdManufacturer.BuildYear.Should().Be(1963);
+        }
+
+        [TestMethod]
+        public void DataObject_Should_Update_Item_From_Database()
+        {
+            var lamborghini = manufacturerDataObject.Select.First("WHERE Name = 'Lamborghini'");
+            var aventador = carDataObject.Select.First("WHERE Name = 'Aventador'");
+            aventador.ManufacturerId = lamborghini.TheId;
+            carDataObject.Update(aventador);
+        }
+
+        [TestMethod]
+        public void DataObject_Should_Read_All_Items_From_Database()
+        {
+            var cars = carDataObject.Select.All();
+
+            cars.Count.Should().Be(2);
+            cars.Should().Contain(c => c.Name == "Esprit Turbo");
+            cars.Should().Contain(c => c.Name == "Aventador");
+        }
+
+        [TestMethod]
+        public void DataObject_Should_Delete_Item_From_Database()
+        {
+            var aventador = carDataObject.Select.First("WHERE Name = 'Aventador'");
+            carDataObject.Delete(aventador);
+            var deletedAventador = carDataObject.Select.First("WHERE Name = 'Aventador'");
+
+            deletedAventador.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void DataObject_Should_CRUD_An_Item_With_Shared_Transactional_Data_Context()
+        {
+            using (var context = new DataContext())
+            {
+                var dodge = new Manufacturer { Name = "Dodge", BuildYear = 1900 };
+                manufacturerDataObject.Insert(dodge, context);
+
+                dodge.BuildYear = 1915;
+                manufacturerDataObject.Update(dodge, context);
+                var updatedDodge = context.First<Manufacturer>("SELECT TOP 1 * FROM Le_Manufacturer WHERE Name = 'Dodge'");
+                
+                var m4s = new Car { Name = "M4S", ModelYear = 1984, Category = CarCategory.Prototype, ManufacturerId = dodge.TheId };
+                carDataObject.Insert(m4s, context);
+                var createdM4s = carDataObject.Select.With(context).First("WHERE Name = 'M4S'");
+
+                carDataObject.Delete(m4s, context);
+                var deletedM4s = carDataObject.Select.With(context).First("WHERE Name = 'M4S'");
+
+                updatedDodge.BuildYear.Should().Be(1915);
+                createdM4s.Should().NotBeNull();
+                deletedM4s.Should().BeNull();
+
+                context.Commit();
+            }
+
+            var createdDodgeOutsiteContext = manufacturerDataObject.Select.First("WHERE Name = 'Dodge'");
+            createdDodgeOutsiteContext.Should().NotBeNull();
         }
 
         [ClassCleanup]

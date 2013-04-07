@@ -29,7 +29,7 @@ namespace Thunderstruck.Test.Models
             get { return String.Concat(ManufacturerId, "_", Name).ToUpper(); }
         }
 
-        public int ManufacturerId { get; set; }
+        public int? ManufacturerId { get; set; }
 
         [Ignore]
         public HttpStyleUriParser MadIgnoredProperty { get; set; }

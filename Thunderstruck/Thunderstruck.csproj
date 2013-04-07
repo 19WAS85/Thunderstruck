@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContext.cs" />
+    <Compile Include="DataObject.cs" />
     <Compile Include="IgnoreAttribute.cs" />
     <Compile Include="Provider\Common\MySqlProvider.cs" />
     <Compile Include="Provider\Common\OracleProvider.cs" />

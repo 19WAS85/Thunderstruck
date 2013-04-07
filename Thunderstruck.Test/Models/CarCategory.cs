@@ -7,6 +7,6 @@ namespace Thunderstruck.Test.Models
 {
     public enum CarCategory
     {
-        Normal, Sport, Transport
+        Normal, Sport, Transport, Prototype
     }
 }
