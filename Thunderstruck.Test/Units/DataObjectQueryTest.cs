@@ -117,5 +117,12 @@ namespace Thunderstruck.Test.Units
 
             commandMock.VerifySet(c => c.CommandText = "SELECT [AirplaneCode], [Name], [FirstFlight] FROM AirplanesTable");
         }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            ProviderFactory.CustomProvider = null;
+            ProviderFactory.ConnectionFactory = null;
+        }
     }
 }

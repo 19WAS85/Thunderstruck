@@ -99,7 +99,7 @@ namespace Thunderstruck.Test.Units
             {
                 context.Execute("DELETE FROM Airplane");
 
-                // Simulate connection open state later the first execute.
+                // After the first Execute, simulates the connection state to "open".
                 connectionMock.Setup(c => c.State).Returns(ConnectionState.Open);
 
                 context.Execute("DELETE FROM Tools");
