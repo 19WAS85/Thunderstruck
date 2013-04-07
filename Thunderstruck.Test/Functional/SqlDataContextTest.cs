@@ -4,11 +4,12 @@ using FluentAssertions;
 using Thunderstruck.Test.Models;
 using System.Linq;
 using System.Data.SqlClient;
+using Thunderstruck.Provider;
 
 namespace Thunderstruck.Test.Functional
 {
     [TestClass]
-    public class SqlTest
+    public class SqlDataContextTest
     {
         private static SqlEnvironment environment;
 
@@ -16,6 +17,13 @@ namespace Thunderstruck.Test.Functional
         public static void ClassInitialize(TestContext tests)
         {
             environment = new SqlEnvironment();
+        }
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            ProviderFactory.CustomProvider = null;
+            ProviderFactory.ConnectionFactory = null;
         }
 
         [TestMethod]
@@ -208,6 +216,9 @@ namespace Thunderstruck.Test.Functional
         [ClassCleanup]
         public static void ClassCleanup()
         {
+            ProviderFactory.CustomProvider = null;
+            ProviderFactory.ConnectionFactory = null;
+
             environment.Dispose();
         }
     }
