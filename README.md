@@ -6,39 +6,29 @@ Thunderstruck is a .NET library that makes access to database simpler and faster
 Another ORM?
 ------------
 
-No! Thunderstruck isn't a ORM. It doesn't abstract the powerful database, just makes the access easier.
+No! Thunderstruck isn't an ORM. It doesn't abstract the features of the database, just makes the access easier.
 
 Download
 --------
 
-Stable binary version => "download here":http://github.com/downloads/wagnerandrade/Thunderstruck/Thunderstruck-Bin-Stable.zip
-
-Licence
--------
-
-http://www.apache.org/licenses/LICENSE-2.0
+Stable binary version => [download here][stable-release-link]
 
 Quick Guide
 -----------
 
-### DataContext
+### DataContext — Executing
 
-Default connection string.
-
-    <connectionStrings>
-        <add name="Default" providerName="..." connectionString="..." />
-    </connectionStrings>
-
-Default DataContext.
+Executes a transactional SQL command with the DataContext:
 
     using (var context = new DataContext())
     {
         context.Execute("DELETE FROM Cars");
         context.Execute("DELETE FROM Tools");
+
         context.Commit();
     }
 
-Non transactional DataContext.
+Executes a non transactional command:
 
     using (var context = new DataContext(Transaction.No))
     {
@@ -46,139 +36,110 @@ Non transactional DataContext.
         context.Execute("DELETE FROM Tools");
     }
 
-Using another database (connection string).
+DataContext uses the Connection String named "Default" in Application.config (or Web.config):
 
-    new DataContext("ConnectionStringName", Transaction.Begin)
+    <add name="Default" providerName="..." connectionString="..." />
 
-Get a value from database.
+If you need a different configuration, you can say to the DataContext what's the ConnectionString name to use:
 
-    var query = "SELECT COUNT(Id) FROM Tools";
-    object toolsCount = context.GetValue(query);
+    DataContext.DefaultConnectionStringName = "AnotherDefaultConnection";
 
-Or typed...
+Or, to connect just one context to another database:
 
-    int toolsCount = context.GetValue<int>(query);
+    var context = new DataContext("AnotherDatabaseConnection");
 
-Or get many values...
+Parameters binding of the Thunderstruck commands prevents string concatenation, errors, conversions and SQL injection:
 
-    var query = "SELECT Name FROM Tools";
-    var toolsName = context.GetValues<string>(query);
+    var insertParams = new { Name = "Esprit Turbo", ModelYear = 1981 };
 
-List of objects from database.
+    context.Execute("INSERT INTO Cars VALUES (@Name, @ModelYear)", insertParams);
+
+You can use any object to bind:
+
+    context.Execute("INSERT INTO Dates VALUES (@Year, @Month, @Day)", DateTime.Today);
+
+### DataContext — Reading
+
+Read a value from database is simple with Thunderstruck:
+
+    var carsCount = context.GetValue("SELECT COUNT(Id) From Cars");
+
+Or use a typed read to cast the value of the reading:
+
+    var last = context.GetValue<DateTime>("SELECT MAX(CreatedAt) From Cars");
+
+Or take a list of objects:
+
+    var carNames = context.GetValues<string>("SELECT Name FROM Cars")
+
+Read data from database and fill it to object:
+
+    var car = context.First<Car>("SELECT TOP 1 Id, Name, ModelYear, Category FROM Cars");
+
+    car.Id // 318
+    car.Name // "Lotus Essex Turbo Esprit"
+    car.ModelYear // 1980
+    car.Category // CarCategory.Sport (enum!)
+
+Or a list of objects:
 
     var cars = context.All<Car>("SELECT * FROM Cars");
 
-### Parameters Binding
+Parameters binding works likewise:
+    
+    var queryParams = new { SearchName = "Lotus" };
+    context.All<Car>("SELECT * FROM Cars WHERE Name LIKE %@SearchName%", queryParams);
 
-Properties binding.
+You can call procedures with Thunderstruck:
 
-    var car = new Car { Name = "Esprit Turbo", ModelYear = 1981 };
-    var command = "INSERT INTO Car VALUES (@Name, @ModelYear)";
-    context.Execute(command, car);
+    var procedureParams = new { Status = "active" };
+    var whoResults = context.All<WhoResult>("EXEC sp_who @Status", procedureParams);
 
-Select the cars of the future.
+### DataContext — Extending
 
-    var query = "SELECT * FROM Car WHERE ModelYear > @Year";
-    car futureCars = context.All<Car>(query, DateTime.Today);
+Thunderstruck supports SQL Server, Oracle and MySQL with these providers name:
+    
+    System.Data.SqlClient
+    System.Data.OracleClient
+    MySql.Data.MySqlClient
 
-You can bind a Dictionary<string, object> too.
+But is easy to create a custom provider, less than 50 lines ([extending DefaultProvider][sql-provider-link]), and set it in Thunderstruck:
 
-### DataObjectCommand
+    ProviderFactory.CustomProvider = (providerName) => new MyCustomProvider();
 
-Creating a object command.
+### DataObject
 
-    var command = new DataObjectCommand<Car>();
+Thunderstruck abstracts CRUD functions with DataObjects:
+    
+    var carData = new DataObject<Car>();
 
-With property.
+    var allCars = carData.Select.All();
+    var lotusCars = carData.Select.All("WHERE Name LIKE '%Lotus%'");
+    var newerCar = carData.Select.First("ORDER BY ModelYear DESC"); // SQL TOP 1
 
-    public DataObjectCommand<Car> Command
-    {
-        get { return new DataObjectCommand<Car>(); }
-    }
+    var car = new Car { Name = "McLaren P1", ModelYear = 2013 };
+    carData.Insert(car);
 
-Insert.
+    // Primary key filled, car.Id > 0
 
-    var car = new Car { Name = "Esprit Turbo", ModelYear = 1981 };
-    command.Insert(car);
+    car.Category = CarCategory.Sport;
+    carData.Update(car);
 
-Insert binds the generated primary key.
+    carData.Delete(car);
 
-    // car.Id == 0
-    command.Insert(car);
-    // car.Id > 0
+DataObject can make transactional interactions to execute commands, just using a DataContext:
 
-Transactional DataObjectCommand.
-
-    Command.Insert(car, context);
-
-    (...)
-
+    carData.Insert(car, context);
     context.Commit();
 
-Update and Delete have the same behavior.
+Or, on read commands:
+    
+    carData.Select.With(context).All("ORDER BY Name");
 
-    car.Name = "Esprit S3";
-    Command.Update(car);
+Licence
+-------
 
-    Command.Delete(car);
+http://www.apache.org/licenses/LICENSE-2.0
 
-### DataObjectQuery
-
-Creating a object query.
-
-    var select = new DataObjectQuery<Car>();
-
-Or...
-
-    new DataObjectQuery<Car>(table: "TB_CARS");
-
-    new DataObjectQuery<Car>(primaryKey: "IdCar");
-
-    new DataObjectQuery<Car>(table: "TB_CARS", primaryKey: "IdCar");
-
-As a property.
-
-    public DataObjectQuery<Car> Select
-    {
-        get { return new DataObjectQuery<Car>(); }
-    }
-
-    var allCars = Select.All();
-    var lotusCars = Select.All("WHERE Name Like '%Lotus%'");
-    var newerCar = Select.First("ORDER BY ModelYear DESC");
-
-Parameters binding.
-
-    anyObject.CarName = "Lotus Esprit Turbo";
-
-    var cars = Select.All("WHERE Name = @CarName", anyObject);
-
-Transactional DataObjectQuery.
-
-    Select.With(context).First("ORDER BY ModelYear DESC");
-
-### Custom DataObjects
-
-> If TB_CARS is the name of the table.
-
-Custom DataObjectCommand.
-
-    new DataObjectCommand<Car>("TB_CAR");
-
-Custom DataObjectQuery.
-
-    new DataObjectQuery<Car>("Name, ModelYear FROM TB_CAR");
-
-Projection with the default fields.
-
-    new DataObjectQuery<Car>("{0} FROM TB_CAR");
-
-### More
-
-Using a custom provider.
-
-    ProviderFactory.CustomProvider = (providerName) => new MyProvider();
-
-Changing default connection string name.
-
-    DataContext.DefaultConnectionStringName = "OtherDatabase";
+[stable-release-link]: http://github.com/downloads/wagnerandrade/Thunderstruck/Thunderstruck-Bin-Stable.zip
+[sql-provider-link]: http://github.com/wagnerandrade/Thunderstruck/blob/master/Thunderstruck/Provider/Common/SqlProvider.cs
