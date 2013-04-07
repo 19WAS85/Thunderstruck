@@ -6,7 +6,7 @@ using Thunderstruck.Runtime;
 using System.Data;
 using FluentAssertions;
 
-namespace Thunderstruck.Test.Units
+namespace Thunderstruck.Test.Unit
 {
     [TestClass]
     public class DataContextTest

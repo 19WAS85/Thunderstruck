@@ -6,7 +6,7 @@ using Thunderstruck.Provider;
 using FluentAssertions;
 using Thunderstruck.Provider.Common;
 
-namespace Thunderstruck.Test.Units
+namespace Thunderstruck.Test.Unit
 {
     [TestClass]
     public class DataObjectCommandTest

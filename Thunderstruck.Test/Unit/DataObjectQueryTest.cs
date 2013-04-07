@@ -5,7 +5,7 @@ using System.Data;
 using Thunderstruck.Provider;
 using Thunderstruck.Provider.Common;
 
-namespace Thunderstruck.Test.Units
+namespace Thunderstruck.Test.Unit
 {
     [TestClass]
     public class DataObjectQueryTest

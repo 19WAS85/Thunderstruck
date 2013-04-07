@@ -69,10 +69,10 @@
     <Compile Include="Models\Manufacturer.cs" />
     <Compile Include="Models\WhoResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Units\DataContextTest.cs" />
-    <Compile Include="Units\ProviderFactoryTest.cs" />
-    <Compile Include="Units\DataObjectCommandTest.cs" />
-    <Compile Include="Units\DataObjectQueryTest.cs" />
+    <Compile Include="Unit\DataContextTest.cs" />
+    <Compile Include="Unit\DataObjectCommandTest.cs" />
+    <Compile Include="Unit\DataObjectQueryTest.cs" />
+    <Compile Include="Unit\ProviderFactoryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -6,7 +6,7 @@ using Thunderstruck.Provider.Common;
 using Moq;
 using Thunderstruck.Provider;
 
-namespace Thunderstruck.Test.Units
+namespace Thunderstruck.Test.Unit
 {
     [TestClass]
     public class ProviderFactoryTest
