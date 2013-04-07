@@ -5,6 +5,7 @@ using Moq;
 using Thunderstruck.Provider;
 using FluentAssertions;
 using Thunderstruck.Provider.Common;
+using Thunderstruck.Runtime;
 
 namespace Thunderstruck.Test.Unit
 {

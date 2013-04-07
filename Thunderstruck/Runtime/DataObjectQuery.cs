@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
-using Thunderstruck.Runtime;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Thunderstruck
+namespace Thunderstruck.Runtime
 {
     public class DataObjectQuery<T> where T : new()
     {

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Thunderstruck.Runtime;
-using Thunderstruck.Provider;
 using System.Reflection;
 
-namespace Thunderstruck
+namespace Thunderstruck.Runtime
 {
     public class DataObjectCommand<T> where T : new()
     {

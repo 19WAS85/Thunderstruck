@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.Common;
 using Thunderstruck.Runtime;
-using System;
 
 namespace Thunderstruck.Provider
 {

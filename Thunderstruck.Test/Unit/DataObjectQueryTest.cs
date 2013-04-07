@@ -4,6 +4,7 @@ using Moq;
 using System.Data;
 using Thunderstruck.Provider;
 using Thunderstruck.Provider.Common;
+using Thunderstruck.Runtime;
 
 namespace Thunderstruck.Test.Unit
 {

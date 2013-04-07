@@ -46,8 +46,6 @@
   <ItemGroup>
     <Compile Include="DataContext.cs" />
     <Compile Include="IgnoreAttribute.cs" />
-    <Compile Include="DataObjectCommand.cs" />
-    <Compile Include="DataObjectQuery.cs" />
     <Compile Include="Provider\Common\MySqlProvider.cs" />
     <Compile Include="Provider\Common\OracleProvider.cs" />
     <Compile Include="Provider\Common\SqlProvider.cs" />
@@ -55,6 +53,8 @@
     <Compile Include="Provider\DefaultProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\ConnectionStringBuffer.cs" />
+    <Compile Include="Runtime\DataObjectCommand.cs" />
+    <Compile Include="Runtime\DataObjectQuery.cs" />
     <Compile Include="Runtime\ParametersBinder.cs" />
     <Compile Include="Runtime\DataRuntimeObject.cs" />
     <Compile Include="Runtime\DataReader.cs" />
