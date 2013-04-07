@@ -144,9 +144,7 @@ As a property.
     }
 
     var allCars = Select.All();
-
     var lotusCars = Select.All("WHERE Name Like '%Lotus%'");
-
     var newerCar = Select.First("ORDER BY ModelYear DESC");
 
 Parameters binding.
