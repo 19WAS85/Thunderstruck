@@ -8,10 +8,12 @@ Another ORM?
 
 No! Thunderstruck isn't an ORM. It doesn't abstract the features of the database, just makes the access easier.
 
-Download
---------
+Install
+-------
 
-Stable binary version => [download here][stable-release-link]
+Use Nuget:
+
+    PM> Install-Package Thunderstruck
 
 Quick Guide
 -----------
@@ -141,5 +143,4 @@ Licence
 
 http://www.apache.org/licenses/LICENSE-2.0
 
-[stable-release-link]: http://github.com/downloads/wagnerandrade/Thunderstruck/Thunderstruck-Bin-Stable.zip
 [sql-provider-link]: http://github.com/wagnerandrade/Thunderstruck/blob/master/Thunderstruck/Provider/Common/SqlProvider.cs

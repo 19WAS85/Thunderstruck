@@ -6,13 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Thunderstruck")]
-[assembly: AssemblyDescription("Thunderstruck is a fast (realy) way to access database with ADO.NET.")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyDescription("Thunderstruck is a .NET library that makes access to database simpler and faster using ADO.NET. A really fast way to access databases. Another ORM? No! Thunderstruck isn't an ORM. It doesn't abstract the features of the database, just makes the access easier.")]
 [assembly: AssemblyCompany("Wagner Andrade")]
 [assembly: AssemblyProduct("Thunderstruck")]
-[assembly: AssemblyCopyright("Copyright © Wagner Andrade 2013")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
