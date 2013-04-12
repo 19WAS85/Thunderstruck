@@ -16,6 +16,9 @@ namespace Thunderstruck.Test.Unit
         [TestInitialize]
         public void Initialize()
         {
+            ProviderFactory.CustomProvider = null;
+            ProviderFactory.ConnectionFactory = null;
+
             factory = new ProviderFactory();
         }
 
