@@ -106,7 +106,7 @@ namespace Thunderstruck.Test.Functional
             {
                 var manufacturers = context.All<Manufacturer>("SELECT * FROM Le_Manufacturer");
 
-                manufacturers.Count.Should().Be(3);
+                manufacturers.Count().Should().Be(3);
                 manufacturers.Should().Contain(m => m.Name == "Lotus");
                 manufacturers.Should().Contain(m => m.Name == "General Motors");
             }
@@ -293,7 +293,7 @@ namespace Thunderstruck.Test.Functional
         {
             var cars = carDataObject.Select.All();
 
-            cars.Count.Should().Be(2);
+            cars.Count().Should().Be(2);
             cars.Should().Contain(c => c.Name == "Esprit Turbo");
             cars.Should().Contain(c => c.Name == "Aventador");
         }

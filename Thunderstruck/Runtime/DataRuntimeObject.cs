@@ -9,8 +9,8 @@ namespace Thunderstruck.Runtime
     {
         private static readonly Type Ignore = typeof(IgnoreAttribute);
         private static readonly Type _type = typeof(T);
-        private static IList<PropertyInfo> _allProperties;
-        private static IList<PropertyInfo> _validProperties;
+        private static IEnumerable<PropertyInfo> _allProperties;
+        private static IEnumerable<PropertyInfo> _validProperties;
         private static PropertyInfo _primaryKey;
 
         public string TypeName
@@ -18,7 +18,7 @@ namespace Thunderstruck.Runtime
             get { return _type.Name; }
         }
 
-        public IList<PropertyInfo> GetProperties()
+        public IEnumerable<PropertyInfo> GetProperties()
         {
             if (_allProperties == null)
             {
@@ -28,7 +28,7 @@ namespace Thunderstruck.Runtime
             return _allProperties;
         }
 
-        public IList<PropertyInfo> GetValidProperties()
+        public IEnumerable<PropertyInfo> GetValidProperties()
         {
             if (_validProperties == null)
             {
@@ -51,14 +51,14 @@ namespace Thunderstruck.Runtime
             return _primaryKey;
         }
 
-        public IList<string> GetFields(string removePrimaryKey)
+        public IEnumerable<string> GetFields(string removePrimaryKey)
         {
             var fields = GetValidProperties().ToList();
             if (removePrimaryKey != null) fields.Remove(GetPrimaryKey(removePrimaryKey));
             return fields.Select(p => p.Name).ToList();
         }
 
-        public IList<string> CreateParameters(string paramIdentifier, string primaryKey)
+        public IEnumerable<string> CreateParameters(string paramIdentifier, string primaryKey)
         {
             var fields = GetFields(removePrimaryKey: primaryKey);
             return fields.Select(f => String.Concat(paramIdentifier, f)).ToList();

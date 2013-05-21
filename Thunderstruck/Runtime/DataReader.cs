@@ -14,7 +14,7 @@ namespace Thunderstruck.Runtime
             _dataReader = dataReader;
         }
 
-        public IList<T> ToObjectList<T>() where T : new()
+        public IEnumerable<T> ToObjectList<T>() where T : new()
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Thunderstruck.Runtime
             }
         }
 
-        public IList<T> ToList<T>()
+        public IEnumerable<T> ToEnumerable<T>()
         {
             try
             {

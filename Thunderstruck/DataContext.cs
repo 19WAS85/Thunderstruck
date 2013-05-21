@@ -127,10 +127,10 @@ namespace Thunderstruck
         /// <param name="query">Query sql to execute on database.</param>
         /// <param name="queryParams">Object or array that contains parameters to bind in query.</param>
         /// <returns>The values of first column.</returns>
-        public IList<T> GetValues<T>(string query, params object[] queryParams)
+        public IEnumerable<T> GetValues<T>(string query, params object[] queryParams)
         {
             var data = Query(query, queryParams);
-            return new DataReader(data).ToList<T>();
+            return new DataReader(data).ToEnumerable<T>();
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Thunderstruck
         /// <param name="query">Query sql to execute on database.</param>
         /// <param name="queryParams">Object or array that contains parameters to bind in query.</param>
         /// <returns>All row of query result in array of specified type.</returns>
-        public IList<T> All<T>(string query, params object[] queryParams) where T : new()
+        public IEnumerable<T> All<T>(string query, params object[] queryParams) where T : new()
         {
             var data = Query(query, queryParams);
             return new DataReader(data).ToObjectList<T>();
