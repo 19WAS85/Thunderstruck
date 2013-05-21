@@ -12,7 +12,7 @@
     	Another ORM? No! Thunderstruck isn't an ORM. It doesn't abstract the features of the database, just makes the access easier.
    	</description>
    	<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <projectUrl>http://github.com/wagnerandrade/Thunderstruck</projectUrl>
+    <projectUrl>https://github.com/wagnerandrade/Thunderstruck#readme</projectUrl>
     <tags>ADO.NET Database</tags>
   </metadata>
 </package>
