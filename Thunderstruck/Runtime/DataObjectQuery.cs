@@ -23,23 +23,38 @@ namespace Thunderstruck.Runtime
 
         public DataContext DataContext { get; private set; }
 
-        public IList<T> All(string where = null, object queryParams = null)
+        public IList<T> All(string where, params object[] queryParams)
         {
             var context = GetDataContext();
             var query = context.Provider.SelectAllQuery(ProjectionMask, where).Trim();
             return Execute(context, query, queryParams);
         }
 
-        public IList<T> Take(int count, string where = null, object queryParams = null)
+        public IList<T> All()
+        {
+            return All(null);
+        }
+
+        public IList<T> Take(int count, string where = null, params object[] queryParams)
         {
             var context = GetDataContext();
             var query = context.Provider.SelectTakeQuery(ProjectionMask, where, count).Trim();
             return Execute(context, query, queryParams);
         }
 
-        public T First(string where = null, object queryParams = null)
+        public IList<T> Take(int count)
+        {
+            return Take(count, null);
+        }
+
+        public T First(string where, params object[] queryParams)
         {
             return Take(1, where, queryParams).FirstOrDefault();
+        }
+
+        public T First()
+        {
+            return First(null);
         }
 
         public DataObjectQuery<T> With(DataContext dataContext)
@@ -48,7 +63,7 @@ namespace Thunderstruck.Runtime
             return this;
         }
 
-        private IList<T> Execute(DataContext context, string query, object queryParams = null)
+        private IList<T> Execute(DataContext context, string query, params object[] queryParams)
         {
             var finalQuery = ResolveProjection(query, context);
 

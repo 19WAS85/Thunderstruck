@@ -8,7 +8,7 @@ namespace Thunderstruck.Runtime
 {
     public class ParametersBinder
     {
-        public ParametersBinder(string parameterIdentifier, object objectParameters)
+        public ParametersBinder(string parameterIdentifier, object[] objectParameters)
         {
             ParameterIdentifier = parameterIdentifier;
             ObjectParameters = objectParameters;
@@ -16,10 +16,12 @@ namespace Thunderstruck.Runtime
 
         public string ParameterIdentifier { get; private set; }
 
-        public object ObjectParameters { get; private set; }
+        public object[] ObjectParameters { get; private set; }
 
         public void Bind(IDbCommand command)
         {
+            if (ObjectParameters == null || ObjectParameters.Length == 0) return;
+
             var values = CreateValuesList(ObjectParameters);
 
             foreach (var item in values)
@@ -33,21 +35,37 @@ namespace Thunderstruck.Runtime
             }
         }
 
-        public IList<KeyValuePair<string, object>> CreateValuesList(object target)
+        public IEnumerable<KeyValuePair<string, object>> CreateValuesList(object[] target)
         {
-            var dictionary = target as Dictionary<string, object>;
-            if (dictionary != null) return dictionary.Select(i => i).ToList();
-            var properties = target.GetType().GetProperties();
-            var notIgnoredProperties = properties.Where(p => !HasIgnoreAttribute(p));
-            return notIgnoredProperties.Select(p => CreateValue(target, p)).ToList();
+            if (target.Length == 1 && IsComplexType(target.First()))
+            {
+                var firstItem = target.First();
+                var dictionary = firstItem as Dictionary<string, object>;
+                if (dictionary != null) return dictionary.Select(i => i).ToList();
+
+                var properties = firstItem.GetType().GetProperties();
+                var notIgnoredProperties = properties.Where(p => !HasIgnoreAttribute(p));
+                return notIgnoredProperties.Select(p => CreateKeyValuePair(firstItem, p)).ToList();
+            }
+            else return target.Select((value, index) => CreateKeyValuePair(value, index));
         }
 
-        private KeyValuePair<string, object> CreateValue(object target, PropertyInfo property)
+        private bool IsComplexType(object target)
+        {
+            return !(target.GetType().IsValueType || target is String);
+        }
+
+        private KeyValuePair<string, object> CreateKeyValuePair(object target, PropertyInfo property)
         {
             object value;
-            if (property.PropertyType.IsEnum) value = (int)property.GetValue(target, null);
+            if (property.PropertyType.IsEnum) value = (int) property.GetValue(target, null);
             else value = property.GetValue(target, null);
             return new KeyValuePair<string, object>(property.Name, value);
+        }
+
+        private KeyValuePair<string, object> CreateKeyValuePair(object value, int index)
+        {
+            return new KeyValuePair<string, object>(Convert.ToString(index), value);
         }
 
         private bool HasIgnoreAttribute(PropertyInfo propertyInfo)

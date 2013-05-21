@@ -209,13 +209,13 @@ namespace Thunderstruck.Test.Unit
         }
 
         [TestMethod]
-        public void DataContext_Should_Execute_Command_With_Parameters()
+        public void DataContext_Should_Execute_Command_With_Anonymous_Object_Parameters()
         {
             using (var context = new DataContext())
             {
-                var car = new { Name = "Fokker Dr.I", FirstFlight = (int?) null };
+                var airplane = new { Name = "Fokker Dr.I", FirstFlight = (int?) null };
                 var command = "INSERT INTO Airplane VALUES (@Name, @FirstFlight)";
-                context.Execute(command, car);
+                context.Execute(command, airplane);
             }
 
             commandMock.Verify(c => c.ExecuteNonQuery(), Times.Once());
@@ -225,6 +225,43 @@ namespace Thunderstruck.Test.Unit
             parameterMock.VerifySet(p => p.Value = "Fokker Dr.I");
             parameterMock.VerifySet(p => p.Value = DBNull.Value);
             parameterCollectionMock.Verify(p => p.Add(parameterMock.Object), Times.Exactly(2));
+        }
+
+        [TestMethod]
+        public void DataContext_Should_Execute_Command_With_Array_Parameters()
+        {
+            commandMock.Setup(c => c.CommandText).Returns("INSERT INTO Airplane VALUES (@0, @1)");
+
+            using (var context = new DataContext())
+            {
+                var command = "INSERT INTO Airplane VALUES (@0, @1)";
+                context.Execute(command, "Fokker Dr.I", null);
+            }
+
+            commandMock.Verify(c => c.ExecuteNonQuery(), Times.Once());
+            commandMock.Verify(c => c.CreateParameter(), Times.Exactly(2));
+            parameterMock.VerifySet(p => p.ParameterName = "0");
+            parameterMock.VerifySet(p => p.ParameterName = "1");
+            parameterMock.VerifySet(p => p.Value = "Fokker Dr.I");
+            parameterMock.VerifySet(p => p.Value = DBNull.Value);
+            parameterCollectionMock.Verify(p => p.Add(parameterMock.Object), Times.Exactly(2));
+        }
+
+        [TestMethod]
+        public void DataContext_Should_Execute_Command_With_Length_One_Array_Parameters()
+        {
+            commandMock.Setup(c => c.CommandText).Returns("INSERT INTO Airplane VALUES (@0)");
+
+            using (var context = new DataContext())
+            {
+                context.Execute("INSERT INTO Airplane VALUES (@0)", "Fokker Dr.I");
+            }
+
+            commandMock.Verify(c => c.ExecuteNonQuery(), Times.Once());
+            commandMock.Verify(c => c.CreateParameter(), Times.Once());
+            parameterMock.VerifySet(p => p.ParameterName = "0");
+            parameterMock.VerifySet(p => p.Value = "Fokker Dr.I");
+            parameterCollectionMock.Verify(p => p.Add(parameterMock.Object), Times.Once());
         }
 
         [TestCleanup]

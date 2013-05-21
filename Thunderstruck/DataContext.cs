@@ -68,9 +68,9 @@ namespace Thunderstruck
         /// Executes a sql query. Avoid, use First or All.
         /// </summary>
         /// <param name="query">Query sql to execute on database.</param>
-        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <param name="queryParams">Object or array that contains parameters to bind in query.</param>
         /// <returns>An open data reader.</returns>
-        public IDataReader Query(string query, object queryParams = null)
+        public IDataReader Query(string query, params object[] queryParams)
         {
             return Provider.Query(query, queryParams);
         }
@@ -81,7 +81,7 @@ namespace Thunderstruck
         /// <param name="command">Sql command to execute on database.</param>
         /// <param name="commandParams">Object that contains parameters to bind in query.</param>
         /// <returns>The number of rows affected.</returns>
-        public int Execute(string command, object commandParams = null)
+        public int Execute(string command, params object[] commandParams)
         {
             return Provider.Execute(command, commandParams);
         }
@@ -92,7 +92,7 @@ namespace Thunderstruck
         /// <param name="command">Sql command to execute on database.</param>
         /// <param name="commandParams">Object that contains parameters to bind in query.</param>
         /// <returns>The last identity value inserted into an identity column in the same scope.</returns>
-        public int ExecuteGetIdentity(string command, object commandParams = null)
+        public int ExecuteGetIdentity(string command, params object[] commandParams)
         {
             return Provider.ExecuteGetIdentity(command, commandParams);
         }
@@ -101,9 +101,9 @@ namespace Thunderstruck
         /// Executes a sql query and returns the value of first column of the first row. 
         /// </summary>
         /// <param name="query">Query sql to execute on database.</param>
-        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <param name="queryParams">Object or array that contains parameters to bind in query.</param>
         /// <returns>The value of first column of the first row.</returns>
-        public object GetValue(string query, object queryParams = null)
+        public object GetValue(string query, params object[] queryParams)
         {
             return Provider.ExecuteGetValue(query, queryParams);
         }
@@ -113,9 +113,9 @@ namespace Thunderstruck
         /// </summary>
         /// <typeparam name="T">Type of return value.</typeparam>
         /// <param name="query">Query sql to execute on database.</param>
-        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <param name="queryParams">Object or array that contains parameters to bind in query.</param>
         /// <returns>The value of first column of the first row of the type specified on T.</returns>
-        public T GetValue<T>(string query, object queryParams = null)
+        public T GetValue<T>(string query, params object[] queryParams)
         {
             var result = GetValue(query, queryParams);
             return DataReader.CastTo<T>(result);
@@ -125,9 +125,9 @@ namespace Thunderstruck
         /// Executes a sql query and returns the value of first column. 
         /// </summary>
         /// <param name="query">Query sql to execute on database.</param>
-        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <param name="queryParams">Object or array that contains parameters to bind in query.</param>
         /// <returns>The values of first column.</returns>
-        public IList<T> GetValues<T>(string query, object queryParams = null)
+        public IList<T> GetValues<T>(string query, params object[] queryParams)
         {
             var data = Query(query, queryParams);
             return new DataReader(data).ToList<T>();
@@ -138,9 +138,9 @@ namespace Thunderstruck
         /// </summary>
         /// <typeparam name="T">Type of object to bind each row of the result.</typeparam>
         /// <param name="query">Query sql to execute on database.</param>
-        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <param name="queryParams">Object or array that contains parameters to bind in query.</param>
         /// <returns>All row of query result in array of specified type.</returns>
-        public IList<T> All<T>(string query, object queryParams = null) where T : new()
+        public IList<T> All<T>(string query, params object[] queryParams) where T : new()
         {
             var data = Query(query, queryParams);
             return new DataReader(data).ToObjectList<T>();
@@ -151,9 +151,9 @@ namespace Thunderstruck
         /// </summary>
         /// <typeparam name="T">Type of object to bind first row of the result.</typeparam>
         /// <param name="query">Query sql to execute on database.</param>
-        /// <param name="queryParams">Object that contains parameters to bind in query.</param>
+        /// <param name="queryParams">Object or array that contains parameters to bind in query.</param>
         /// <returns>First row of query result in specified type.</returns>
-        public T First<T>(string query, object queryParams = null) where T : new()
+        public T First<T>(string query, params object[] queryParams) where T : new()
         {
             var data = Query(query, queryParams);
             return new DataReader(data).ToObjectList<T>().FirstOrDefault();

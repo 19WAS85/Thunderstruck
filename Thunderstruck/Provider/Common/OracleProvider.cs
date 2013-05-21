@@ -12,7 +12,7 @@ namespace Thunderstruck.Provider.Common
             get { return ":"; }
         }
 
-        public override int ExecuteGetIdentity(string command, object commandParams)
+        public override int ExecuteGetIdentity(string command, object[] commandParams)
         {
             var identityCommand = String.Concat("BEGIN ", command, " RETURNING IDPROJETO INTO ", ParameterName, "; END;");
             var dbCommand = CreateDbCommand(identityCommand, commandParams, true);

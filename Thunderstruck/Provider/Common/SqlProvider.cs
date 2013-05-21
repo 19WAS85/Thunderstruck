@@ -9,7 +9,7 @@ namespace Thunderstruck.Provider.Common
             get { return "@"; }
         }
 
-        public override int ExecuteGetIdentity(string command, object commandParams)
+        public override int ExecuteGetIdentity(string command, object[] commandParams)
         {
             var identityQuery = String.Concat(command, "; SELECT SCOPE_IDENTITY()");
             var value = CreateDbCommand(identityQuery, commandParams).ExecuteScalar();

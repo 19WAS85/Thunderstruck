@@ -18,13 +18,13 @@ namespace Thunderstruck.Provider
 
         string FieldFormat { get; }
 
-        IDataReader Query(string query, object queryParams);
+        IDataReader Query(string query, object[] queryParams);
 
-        int Execute(string command, object commandParams);
+        int Execute(string command, object[] commandParams);
 
-        int ExecuteGetIdentity(string command, object commandParams);
+        int ExecuteGetIdentity(string command, object[] commandParams);
 
-        object ExecuteGetValue(string query, object queryParams);
+        object ExecuteGetValue(string query, object[] queryParams);
 
         string SelectAllQuery(string projection, string where);
 

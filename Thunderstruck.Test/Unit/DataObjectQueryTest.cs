@@ -94,6 +94,39 @@ namespace Thunderstruck.Test.Unit
         }
 
         [TestMethod]
+        public void DataObjectQuery_Should_Select_All_Items_From_Database_With_Array_Parameter_Binding_And_Context_Transaction()
+        {
+            commandMock.Setup(c => c.CommandText).Returns("SELECT [Id], [Name], [FirstFlight] FROM Airplane WHERE Name = @0");
+
+            using (var context = new DataContext())
+            {
+                // Execute a command to open transaction.
+                context.Execute("DELETE FROM Airplane");
+
+                // Simulate connection open state later the first execute.
+                connectionMock.Setup(c => c.State).Returns(ConnectionState.Open);
+
+                select.With(context).All("WHERE Name = @0", "Omega");
+
+                context.Commit();
+            }
+
+            connectionMock.Verify(c => c.CreateCommand(), Times.Exactly(2));
+            connectionMock.Verify(c => c.Open(), Times.Once());
+            connectionMock.Verify(c => c.BeginTransaction(), Times.Once());
+            connectionMock.Verify(c => c.Close(), Times.Once());
+            commandMock.Verify(c => c.ExecuteReader(), Times.Once());
+            commandMock.VerifySet(c => c.CommandText = "SELECT [Id], [Name], [FirstFlight] FROM Airplane WHERE Name = @0");
+            commandMock.VerifySet(c => c.Connection = connectionMock.Object);
+            commandMock.VerifySet(c => c.Transaction = transactionMock.Object);
+            commandMock.Verify(c => c.CreateParameter(), Times.Once());
+            parameterMock.VerifySet(p => p.ParameterName = "@0");
+            parameterMock.VerifySet(p => p.Value = "Omega");
+            parameterCollectionMock.Verify(p => p.Add(parameterMock.Object), Times.Once());
+            transactionMock.Verify(t => t.Commit(), Times.Once());
+        }
+
+        [TestMethod]
         public void DataObjectQuery_Should_Select_Limited_Items_From_Database()
         {
             select.Take(13, "ORDER BY Year DESC");

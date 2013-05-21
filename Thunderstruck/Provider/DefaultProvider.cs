@@ -29,22 +29,22 @@ namespace Thunderstruck.Provider
             DbConnection.ConnectionString = connectionSettings.ConnectionString;
         }
 
-        public IDataReader Query(string query, object queryParams)
+        public IDataReader Query(string query, object[] queryParams)
         {
             return CreateDbCommand(query, queryParams, transactional: false).ExecuteReader();
         }
 
-        public int Execute(string command, object commandParams)
+        public int Execute(string command, object[] commandParams)
         {
             return CreateDbCommand(command, commandParams).ExecuteNonQuery();
         }
 
-        public object ExecuteGetValue(string query, object queryParams)
+        public object ExecuteGetValue(string query, object[] queryParams)
         {
             return CreateDbCommand(query, queryParams, transactional: false).ExecuteScalar();
         }
 
-        public abstract int ExecuteGetIdentity(string command, object commandParams);
+        public abstract int ExecuteGetIdentity(string command, object[] commandParams);
 
         public void Commit()
         {
@@ -57,7 +57,7 @@ namespace Thunderstruck.Provider
             if (DbConnection != null) DbConnection.Close();
         }
 
-        protected IDbCommand CreateDbCommand(string query, object objectParameters, bool transactional = true)
+        protected IDbCommand CreateDbCommand(string query, object[] objectParameters, bool transactional = true)
         {
             Open(transactional);
 

@@ -60,6 +60,10 @@ You can use any object to bind:
 
     context.Execute("INSERT INTO Dates VALUES (@Year, @Month, @Day)", DateTime.Today);
 
+Or you can use an params array to bind values:
+
+    context.Execute("INSERT INTO Dates VALUES (@0, @1, @2)", 2005, 3, 31);
+
 ### DataContext — Reading
 
 Read a value from database is simple with Thunderstruck:
@@ -88,14 +92,12 @@ Or a list of objects:
     var cars = context.All<Car>("SELECT * FROM Cars");
 
 Parameters binding works likewise:
-    
-    var queryParams = new { SearchName = "Lotus" };
-    context.All<Car>("SELECT * FROM Cars WHERE Name LIKE %@SearchName%", queryParams);
+
+    context.All<Car>("SELECT * FROM Cars WHERE Name LIKE %@0%", "Lotus");
 
 You can call procedures with Thunderstruck:
 
-    var procedureParams = new { Status = "active" };
-    var whoResults = context.All<WhoResult>("EXEC sp_who @Status", procedureParams);
+    var whoResults = context.All<WhoResult>("EXEC sp_who @0", "active");
 
 ### DataContext — Extending
 

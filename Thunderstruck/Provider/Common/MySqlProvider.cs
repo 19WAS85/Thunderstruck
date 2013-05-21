@@ -4,7 +4,7 @@ namespace Thunderstruck.Provider.Common
 {
     public class MySqlProvider : DefaultProvider
     {
-        public override int ExecuteGetIdentity(string command, object commandParams)
+        public override int ExecuteGetIdentity(string command, object[] commandParams)
         {
             var identityQuery = String.Concat(command, "; SELECT last_insert_id();");
             var value = CreateDbCommand(identityQuery, commandParams).ExecuteScalar();
