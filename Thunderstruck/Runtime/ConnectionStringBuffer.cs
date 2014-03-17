@@ -22,7 +22,8 @@ namespace Thunderstruck.Runtime
 
         #endregion
 
-        private Dictionary<string, ConnectionStringSettings> _buffer;
+		private Dictionary<string, ConnectionStringSettings> _buffer;
+		private object _syncRoot = new object();
 
         public ConnectionStringBuffer()
         {
@@ -33,8 +34,15 @@ namespace Thunderstruck.Runtime
         {
             if (!_buffer.ContainsKey(connectionStringName))
             {
-                _buffer.Add(connectionStringName, GetFromConfig(connectionStringName));
+				lock (_syncRoot)
+				{
+					if (!_buffer.ContainsKey(connectionStringName))
+					{
+						_buffer.Add(connectionStringName, GetFromConfig(connectionStringName));
+					}
+				}
             }
+
             return _buffer[connectionStringName];
         }
 
