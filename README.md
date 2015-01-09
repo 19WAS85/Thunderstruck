@@ -107,9 +107,15 @@ Thunderstruck supports SQL Server, Oracle and MySQL with these providers name:
     System.Data.OracleClient
     MySql.Data.MySqlClient
 
-It is easy to create a custom provider, usually less than 50 lines of code ([extending DefaultProvider][sql-provider-link]), and set it in Thunderstruck:
+It is easy to create a custom provider, usually less than 50 lines of code ([extending DefaultProvider][sql-provider-link]).
 
-    ProviderFactory.CustomProvider = (providerName) => new MyCustomProvider();
+There are two ways to add a custom provider:
+
+1. Add it as an additional provider: ProviderFactory.AddProvider("My.Provider", typeof(MyProvider))
+2. Add it as a custom provider: ProviderFactory.CustomProvider = (providerName) => new MyCustomProvider();
+
+Note, when you set a CustomProvider, that is the only provider available to Thunderbird! If you want to use multiple
+providers, use the AddProvider() method.
 
 ### DataObject
 

@@ -85,5 +85,43 @@ namespace Thunderstruck.Test.Unit
 
             provider.Should().Be(providerMock.Object);
         }
+
+		[TestMethod]
+		public void ProviderFactory_Add_Provider()
+		{
+			ProviderFactory.AddProvider("Custom.Provider", typeof(CustomProvider));
+
+			var provider = factory.ResolveDataProvider("Custom.Provider");
+
+			provider.Should().BeOfType<CustomProvider>();
+		}
+
+		public class CustomProvider : DefaultProvider
+		{
+			public override string ParameterIdentifier
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public override string FieldFormat
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public override string SelectAllQuery(string projection, string where)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override string SelectTakeQuery(string projection, string where, int count)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override int ExecuteGetIdentity(string command, object[] commandParams)
+			{
+				throw new NotImplementedException();
+			}
+		}
     }
 }
