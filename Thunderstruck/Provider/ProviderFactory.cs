@@ -45,7 +45,7 @@ namespace Thunderstruck.Provider
 			var exceptionMessage = String.Format(
 				"Thunderstruck do not supports the '{0}' provider. Either add your provider using the ProviderFactory.AddProvider() method, or create and set a ProviderResolver.CustomProvider.",
 				providerName);
-		
+
 			throw new ThunderException(exceptionMessage);
 		}
 
@@ -71,8 +71,21 @@ namespace Thunderstruck.Provider
 			{
 				throw new ArgumentNullException("providerType");
 			}
+			if (Providers.ContainsKey(providerName))
+			{
+				if (!Providers[providerName].Equals(providerType))
+				{
+					var message = String.Format(
+						"Attempting to add a provider named '{0}' of type '{1}', but an existing provider of type '{2}' already exists with that name.",
+						providerName, providerType.ToString(), Providers[providerName].ToString());
 
-			Providers.Add(providerName, providerType);
+					throw new ThunderException(message);
+				}
+			}
+			else
+			{
+				Providers.Add(providerName, providerType);
+			}
 		}
 	}
 }

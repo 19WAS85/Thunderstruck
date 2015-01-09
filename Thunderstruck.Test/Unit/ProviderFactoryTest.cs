@@ -96,6 +96,26 @@ namespace Thunderstruck.Test.Unit
 			provider.Should().BeOfType<CustomProvider>();
 		}
 
+		[TestMethod]
+		public void ProviderFactory_Add_Provider_Same_Name_Same_Type()
+		{
+			ProviderFactory.AddProvider("Custom.Provider", typeof(CustomProvider));
+			ProviderFactory.AddProvider("Custom.Provider", typeof(CustomProvider));
+
+			// if we got here with no exception, we're good
+			Assert.IsTrue(true);
+		}
+
+		[TestMethod, ExpectedException(typeof(ThunderException))]
+		public void ProviderFactory_Add_Provider_Same_Name_Different_Type()
+		{
+			ProviderFactory.AddProvider("Custom.Provider", typeof(CustomProvider));
+			ProviderFactory.AddProvider("Custom.Provider", typeof(SqlProvider));
+
+			// if we got here with no exception, we're not good
+			Assert.Fail();
+		}
+
 		public class CustomProvider : DefaultProvider
 		{
 			public override string ParameterIdentifier
