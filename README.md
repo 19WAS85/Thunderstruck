@@ -1,12 +1,12 @@
 Thunderstruck
 =============
 
-Thunderstruck is a .NET library that makes access to database simpler and faster using ADO.NET. A really fast way to access databases.
+Thunderstruck is a .NET library that makes access to databases simpler and faster using ADO.NET. A really fast way to access databases.
 
 Another ORM?
 ------------
 
-No! Thunderstruck isn't an ORM. It doesn't abstract the features of the database, just makes the access easier.
+No! Thunderstruck isn't an ORM. It doesn't abstract the features of the database, just makes accessing the database easier.
 
 Install
 -------
@@ -30,7 +30,7 @@ Executes a transactional SQL command with the DataContext:
         context.Commit();
     }
 
-Executes a non transactional command:
+Executes a non-transactional command:
 
     using (var context = new DataContext(Transaction.No))
     {
@@ -38,11 +38,11 @@ Executes a non transactional command:
         context.Execute("DELETE FROM Tools");
     }
 
-DataContext uses the Connection String named "Default" in Application.config (or Web.config):
+DataContext uses the Connection String named "Default" in App.config (or Web.config):
 
     <add name="Default" providerName="..." connectionString="..." />
 
-If you need a different configuration, you can say to the DataContext what's the ConnectionString name to use:
+If you need a different default connection string, you can specify the DefaultConnectionString name to use on the DataContext class:
 
     DataContext.DefaultConnectionStringName = "AnotherDefaultConnection";
 
@@ -60,25 +60,25 @@ You can use any object to bind:
 
     context.Execute("INSERT INTO Dates VALUES (@Year, @Month, @Day)", DateTime.Today);
 
-Or you can use an params array to bind values:
+Or you can use a params array to bind values:
 
     context.Execute("INSERT INTO Dates VALUES (@0, @1, @2)", 2005, 3, 31);
 
 ### DataContext — Reading
 
-Read a value from database is simple with Thunderstruck:
+Reading a value from the database is simple with Thunderstruck:
 
     var carsCount = context.GetValue("SELECT COUNT(Id) From Cars");
 
-Or use a typed read to cast the value of the reading:
+Or specify the type to cast the value to when reading:
 
     var last = context.GetValue<DateTime>("SELECT MAX(CreatedAt) From Cars");
 
-Or take a list of objects:
+Or get a list of values:
 
     var carNames = context.GetValues<string>("SELECT Name FROM Cars")
 
-Read data from database and fill it to object:
+Read data from the database and fill it to object:
 
     var car = context.First<Car>("SELECT TOP 1 Id, Name, ModelYear, Category FROM Cars");
 
@@ -87,15 +87,20 @@ Read data from database and fill it to object:
     car.ModelYear // 1980
     car.Category // CarCategory.Sport (enum!)
 
-Or a list of objects:
+Or get a list of objects:
 
     var cars = context.All<Car>("SELECT * FROM Cars");
+
+Or, load into a dynamic object. Each field name in the data source will be added dynamically:
+
+	dynamic car = context.First<ExpandoObject>("SELECT Name, CreatedAt as CreatedOn FROM Car");
+	IEnumerable<dynamic> cars = context.All<ExpandoObject>("SELECT * FROM Car");
 
 Parameters binding works likewise:
 
     context.All<Car>("SELECT * FROM Cars WHERE Name LIKE %@0%", "Lotus");
 
-You can call procedures with Thunderstruck:
+You can call stored procedures with Thunderstruck:
 
     var whoResults = context.All<WhoResult>("EXEC sp_who @0", "active");
 
@@ -107,9 +112,15 @@ Thunderstruck supports SQL Server, Oracle and MySQL with these providers name:
     System.Data.OracleClient
     MySql.Data.MySqlClient
 
-But is easy to create a custom provider, less than 50 lines ([extending DefaultProvider][sql-provider-link]), and set it in Thunderstruck:
+It is easy to create a custom provider, usually less than 50 lines of code ([extending DefaultProvider][sql-provider-link]).
 
-    ProviderFactory.CustomProvider = (providerName) => new MyCustomProvider();
+There are two ways to add a custom provider:
+
+1. Add it as an additional provider: ProviderFactory.AddProvider("My.Provider", typeof(MyProvider))
+2. Add it as a custom provider: ProviderFactory.CustomProvider = (providerName) => new MyCustomProvider();
+
+Note, when you set a CustomProvider, that is the only provider available to Thunderbird! If you want to use multiple
+providers, use the AddProvider() method.
 
 ### DataObject
 

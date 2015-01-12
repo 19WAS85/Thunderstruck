@@ -85,5 +85,63 @@ namespace Thunderstruck.Test.Unit
 
             provider.Should().Be(providerMock.Object);
         }
+
+		[TestMethod]
+		public void ProviderFactory_Add_Provider()
+		{
+			ProviderFactory.AddProvider("Custom.Provider", typeof(CustomProvider));
+
+			var provider = factory.ResolveDataProvider("Custom.Provider");
+
+			provider.Should().BeOfType<CustomProvider>();
+		}
+
+		[TestMethod]
+		public void ProviderFactory_Add_Provider_Same_Name_Same_Type()
+		{
+			ProviderFactory.AddProvider("Custom.Provider", typeof(CustomProvider));
+			ProviderFactory.AddProvider("Custom.Provider", typeof(CustomProvider));
+
+			// if we got here with no exception, we're good
+			Assert.IsTrue(true);
+		}
+
+		[TestMethod, ExpectedException(typeof(ThunderException))]
+		public void ProviderFactory_Add_Provider_Same_Name_Different_Type()
+		{
+			ProviderFactory.AddProvider("Custom.Provider", typeof(CustomProvider));
+			ProviderFactory.AddProvider("Custom.Provider", typeof(SqlProvider));
+
+			// if we got here with no exception, we're not good
+			Assert.Fail();
+		}
+
+		public class CustomProvider : DefaultProvider
+		{
+			public override string ParameterIdentifier
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public override string FieldFormat
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public override string SelectAllQuery(string projection, string where)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override string SelectTakeQuery(string projection, string where, int count)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override int ExecuteGetIdentity(string command, object[] commandParams)
+			{
+				throw new NotImplementedException();
+			}
+		}
     }
 }
