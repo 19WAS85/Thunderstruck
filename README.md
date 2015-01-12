@@ -91,6 +91,11 @@ Or get a list of objects:
 
     var cars = context.All<Car>("SELECT * FROM Cars");
 
+Or, load into a dynamic object. Each field name in the data source will be added dynamically:
+
+	dynamic car = context.First<ExpandoObject>("SELECT Name, CreatedAt as CreatedOn FROM Car");
+	IEnumerable<dynamic> cars = context.All<ExpandoObject>("SELECT * FROM Car");
+
 Parameters binding works likewise:
 
     context.All<Car>("SELECT * FROM Cars WHERE Name LIKE %@0%", "Lotus");

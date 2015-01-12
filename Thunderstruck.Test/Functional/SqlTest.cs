@@ -6,6 +6,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using Thunderstruck.Provider;
 using System.Dynamic;
+using System.Collections.Generic;
 
 namespace Thunderstruck.Test.Functional
 {
@@ -348,6 +349,15 @@ namespace Thunderstruck.Test.Functional
 
 				Assert.AreEqual("Esprit Turbo", car.Name);
 				Assert.AreEqual(DateTime.Today.Date, car.CreatedOn);
+			}
+
+			using (var context = new DataContext())
+			{
+				IEnumerable<dynamic> cars = context.All<ExpandoObject>("SELECT * FROM Car");
+				
+				Assert.AreEqual(1, cars.Count());
+				Assert.AreEqual("Esprit Turbo", cars.First().Name);
+				Assert.AreEqual(DateTime.Today.Date, cars.First().CreatedAt);
 			}
 		}
 
