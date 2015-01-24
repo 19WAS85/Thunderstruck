@@ -5,6 +5,8 @@ using Thunderstruck.Test.Models;
 using System.Linq;
 using System.Data.SqlClient;
 using Thunderstruck.Provider;
+using System.Dynamic;
+using System.Collections.Generic;
 
 namespace Thunderstruck.Test.Functional
 {
@@ -141,7 +143,7 @@ namespace Thunderstruck.Test.Functional
             {
                 var selectParameters = new { Name = "Lotus" };
                 var manufacturer = context.First<Manufacturer>("SELECT TheId FROM Le_Manufacturer WHERE Name = @Name", selectParameters);
-                
+
                 var insertParameters = new Car
                 {
                     Name = "Esprit Turbo",
@@ -319,7 +321,7 @@ namespace Thunderstruck.Test.Functional
                 dodge.BuildYear = 1915;
                 manufacturerDataObject.Update(dodge, context);
                 var updatedDodge = context.First<Manufacturer>("SELECT TOP 1 * FROM Le_Manufacturer WHERE Name = 'Dodge'");
-                
+
                 var m4s = new Car { Name = "M4S", ModelYear = 1984, Category = CarCategory.Prototype, ManufacturerId = dodge.TheId };
                 carDataObject.Insert(m4s, context);
                 var createdM4s = carDataObject.Select.With(context).First("WHERE Name = 'M4S'");
@@ -336,6 +338,27 @@ namespace Thunderstruck.Test.Functional
 
             var createdDodgeOutsiteContext = manufacturerDataObject.Select.First("WHERE Name = 'Dodge'");
             createdDodgeOutsiteContext.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public void T_DataObject_Can_Be_ExpandoObject()
+        {
+            using (var context = new DataContext())
+            {
+                dynamic car = context.First<ExpandoObject>("SELECT Name, CreatedAt as CreatedOn FROM Car");
+
+                Assert.AreEqual("Esprit Turbo", car.Name);
+                Assert.AreEqual(DateTime.Today.Date, car.CreatedOn);
+            }
+
+            using (var context = new DataContext())
+            {
+                IEnumerable<dynamic> cars = context.All<ExpandoObject>("SELECT * FROM Car");
+
+                Assert.AreEqual(1, cars.Count());
+                Assert.AreEqual("Esprit Turbo", cars.First().Name);
+                Assert.AreEqual(DateTime.Today.Date, cars.First().CreatedAt);
+            }
         }
 
         [ClassCleanup]

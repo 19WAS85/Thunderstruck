@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
+using System.Reflection;
 
 namespace Thunderstruck.Runtime
 {
@@ -22,32 +24,33 @@ namespace Thunderstruck.Runtime
                 var properties = typeof(T).GetProperties();
                 var readerFields = GetFields();
 
+                bool isDynamic = (typeof(IDynamicMetaObjectProvider).IsAssignableFrom(typeof(T)));
+                IDictionary<string, object> dynamicValues = null;
+
                 while (_dataReader.Read())
                 {
                     var item = new T();
 
                     foreach (var field in readerFields)
                     {
+                        if (isDynamic)
+                        {
+                            if (dynamicValues == null)
+                            {
+                                dynamicValues = (IDictionary<string, object>)item;
+                            }
+
+                            dynamicValues[field] = GetSafeValue(_dataReader[field].GetType(), field);
+
+                            continue;
+                        }
+
                         var property = properties.FirstOrDefault(p => p.Name.ToUpper() == field.ToUpper());
                         if (property == null || !property.CanWrite) continue;
 
                         try
                         {
-                            var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                            object safeValue = null;
-                            if (property.PropertyType.IsEnum)
-                            {
-                                var enumType = property.PropertyType;
-                                var enumValue = Convert.ToInt32(_dataReader[field].ToString());
-                                safeValue = Enum.ToObject(enumType, enumValue);
-                            }
-                            else
-                            {
-                                var isNull = _dataReader[field] == null || _dataReader[field] is DBNull;
-                                safeValue = (isNull) ? null : Convert.ChangeType(_dataReader[field], propertyType);
-                            }
-                            var stringSafeValue = safeValue as String;
-                            if (stringSafeValue != null) safeValue = stringSafeValue.Trim();
+                            var safeValue = GetSafeValue(Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType, field);
                             property.SetValue(item, safeValue, null);
                         }
                         catch (FormatException err)
@@ -68,6 +71,30 @@ namespace Thunderstruck.Runtime
             {
                 _dataReader.Close();
             }
+        }
+
+        private object GetSafeValue(Type propertyType, string field)
+        {
+            object safeValue = null;
+
+            if (propertyType.IsEnum)
+            {
+                var enumValue = Convert.ToInt32(_dataReader[field].ToString());
+                safeValue = Enum.ToObject(propertyType, enumValue);
+            }
+            else
+            {
+                var isNull = _dataReader[field] == null || _dataReader[field] is DBNull;
+                safeValue = (isNull) ? null : Convert.ChangeType(_dataReader[field], propertyType);
+            }
+
+            var stringSafeValue = safeValue as String;
+            if (stringSafeValue != null)
+            {
+                safeValue = stringSafeValue.Trim();
+            }
+
+            return safeValue;
         }
 
         public IEnumerable<T> ToEnumerable<T>()
@@ -97,7 +124,7 @@ namespace Thunderstruck.Runtime
         public static T CastTo<T>(object value)
         {
             if (value is DBNull) return default(T);
-            return (T) Convert.ChangeType(value, typeof(T));
+            return (T)Convert.ChangeType(value, typeof(T));
         }
     }
 }
