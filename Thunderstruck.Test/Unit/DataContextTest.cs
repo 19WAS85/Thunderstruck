@@ -5,6 +5,7 @@ using Thunderstruck.Provider;
 using Thunderstruck.Runtime;
 using System.Data;
 using FluentAssertions;
+using System.Configuration;
 
 namespace Thunderstruck.Test.Unit
 {
@@ -132,9 +133,18 @@ namespace Thunderstruck.Test.Unit
             var context = new DataContext("AnotherDatabase", Transaction.Begin);
 
             context.ConnectionSettings.ConnectionString.Should().Be("whatever");
-        }
+		}
 
-        [TestMethod]
+		[TestMethod]
+		public void DataContext_Should_Be_Possible_To_Use_Connection_String_Settings()
+		{
+			var css = new ConnectionStringSettings("SettingsDatabase", "connectionStringSettings");
+			var context = new DataContext(css, Transaction.Begin);
+
+			context.ConnectionSettings.ConnectionString.Should().Be("connectionStringSettings");
+		}
+
+		[TestMethod]
         public void DataContext_Should_Not_Create_Connection_If_Not_Use_Commands()
         {
             var context = new DataContext();
