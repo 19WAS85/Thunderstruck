@@ -106,7 +106,7 @@ namespace Thunderstruck.Runtime
         {
             var fields = _runtimeObject.GetFields(removePrimaryKey: null);
             var formatedFields = fields.Select(f => String.Format(context.Provider.FieldFormat, f));
-            return String.Join(", ", formatedFields);
+            return String.Join(", ", formatedFields.ToArray());
         }
     }
 }
