@@ -63,10 +63,15 @@ namespace Thunderstruck.Provider
 
         public static void AddProvider(string providerName, Type providerType)
         {
+#if !NET35
             if (String.IsNullOrWhiteSpace(providerName))
+#else
+            if (String.IsNullOrEmpty(providerName))
+#endif
             {
                 throw new ArgumentException("Parameter 'providerName' can not be null and must contain data.", "providerName");
             }
+
             if (providerType == null)
             {
                 throw new ArgumentNullException("providerType");

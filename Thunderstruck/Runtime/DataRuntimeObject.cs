@@ -98,7 +98,7 @@ namespace Thunderstruck.Runtime
 
         private string Comma(IEnumerable<string> list)
         {
-            return String.Join(", ", list);
+            return String.Join(", ", list.ToArray());
         }
     }
 }

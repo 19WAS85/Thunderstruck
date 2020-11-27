@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thunderstruck", "Thunderstruck\Thunderstruck.csproj", "{0DC5AB48-1DA5-4185-A18E-46C111A82454}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thunderstruck.Test", "Thunderstruck.Test\Thunderstruck.Test.csproj", "{1516ECE1-30A2-443A-BB17-1FEE1997ADD3}"
@@ -53,5 +55,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A46D863-5935-4A2B-98FA-966BF9C9F981}
 	EndGlobalSection
 EndGlobal

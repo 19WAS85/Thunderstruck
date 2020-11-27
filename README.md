@@ -50,6 +50,10 @@ Or, to connect just one context to another database:
 
     var context = new DataContext("AnotherDatabaseConnection");
 
+If you need to connect to a dynamic connection string, pass a ConnectionStringSettings object to the DataContext class:
+
+    var context = new DataContext(new ConnectionStringSettings("myDb", "myConnectionString"));
+
 Parameters binding of the Thunderstruck commands prevents string concatenation, errors, conversions and SQL injection:
 
     var insertParams = new { Name = "Esprit Turbo", ModelYear = 1981 };

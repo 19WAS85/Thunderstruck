@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+#if !NET35
 using System.Dynamic;
+#endif
 using System.Linq;
 using System.Reflection;
 
@@ -24,8 +26,12 @@ namespace Thunderstruck.Runtime
                 var properties = typeof(T).GetProperties();
                 var readerFields = GetFields();
 
+#if !NET35
                 bool isDynamic = (typeof(IDynamicMetaObjectProvider).IsAssignableFrom(typeof(T)));
                 IDictionary<string, object> dynamicValues = null;
+#else
+                bool isDynamic = false;
+#endif
 
                 while (_dataReader.Read())
                 {
@@ -35,11 +41,7 @@ namespace Thunderstruck.Runtime
                     {
                         if (isDynamic)
                         {
-                            if (dynamicValues == null)
-                            {
-                                dynamicValues = (IDictionary<string, object>)item;
-                            }
-
+                            IDictionary<string, object> dynamicValues = (IDictionary<string, object>)item;
                             dynamicValues[field] = GetSafeValue(_dataReader[field].GetType(), field);
 
                             continue;

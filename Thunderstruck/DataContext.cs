@@ -20,29 +20,41 @@ namespace Thunderstruck
         /// <summary>
         /// Creates a new transactional data context to connection string named "Default".
         /// </summary>
-        public DataContext() : this(null, Transaction.Begin) { }
+        public DataContext() : this((string)null, Transaction.Begin) { }
 
         /// <summary>
         /// Creates a new data context to connection string named "Default". 
         /// </summary>
         /// <param name="transactionMode">Defines if data context is transactional.</param>
-        public DataContext(Transaction transactionMode) : this(null, transactionMode) { }
+        public DataContext(Transaction transactionMode) : this((string)null, transactionMode) { }
 
         /// <summary>
         /// Creates a new data context.
         /// </summary>
         /// <param name="connectionStringName">Connection string name of target database.</param>
         /// <param name="transaction">Defines if data context is transactional.</param>
-        public DataContext(string connectionStringName, Transaction transaction)
-        {
-            TransactionMode = transaction;
+        public DataContext(string connectionStringName, Transaction transaction) : this(ConnectionStringBuffer.Instance.Get(connectionStringName ?? DefaultConnectionStringName), transaction) { }
 
-            var connectionName = connectionStringName ?? DefaultConnectionStringName;
-            ConnectionSettings = ConnectionStringBuffer.Instance.Get(connectionName);
+		/// <summary>
+		/// Creates a new data context.
+		/// </summary>
+		/// <param name="connectionStringSettings">Connection string settings of target database.</param>
+		public DataContext(ConnectionStringSettings connectionStringSettings) : this(connectionStringSettings, Transaction.Begin) { }
 
-            var providerFactory = new ProviderFactory();
-            Provider = providerFactory.Create(ConnectionSettings, transaction);
-        }
+		/// <summary>
+		/// Creates a new data context.
+		/// </summary>
+		/// <param name="connectionStringSettings">Connection string settings of target database.</param>
+		/// <param name="transaction">Defines if data context is transactional.</param>
+		public DataContext(ConnectionStringSettings connectionStringSettings, Transaction transaction)
+		{
+			TransactionMode = transaction;
+
+			ConnectionSettings = connectionStringSettings;
+
+			var providerFactory = new ProviderFactory();
+			Provider = providerFactory.Create(ConnectionSettings, transaction);
+		}
 
         /// <summary>
         /// Thunderstruck data provider.
